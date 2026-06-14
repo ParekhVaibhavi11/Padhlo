@@ -3,7 +3,7 @@ import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Login from "../pages/Login/Login";
 import ProtectedRoute from "./ProtectedRoute";
-
+import ClassroomDetails from "../pages/Classroom/ClassroomDetails";
 import Tasks from "../pages/Tasks/Tasks";
 import Profile from "../pages/Profile/Profile";
 import Classroom from "../pages/Classroom/Classroom";
@@ -79,6 +79,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Materials />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/classroom/:id"
+          element={
+            <ProtectedRoute>
+              <ClassroomDetails />
             </ProtectedRoute>
           }
         />

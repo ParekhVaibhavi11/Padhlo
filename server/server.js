@@ -20,6 +20,20 @@ app.use(
   require("./routes/taskRoutes")
 );
 
+app.use(
+  "/api/classrooms",
+  require(
+    "./routes/classroomRoutes"
+  )
+);
+
+app.use(
+  "/api/classrooms",
+  require(
+    "./routes/classroomTaskRoutes"
+  )
+);
+
 app.get("/", (req, res) => {
   res.send("Padhlo API Running");
 });
