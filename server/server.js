@@ -49,6 +49,13 @@ app.use(
   require("./routes/eventRoutes")
 );
 
+app.use(
+  "/api/profile",
+  require(
+    "./routes/profileRoutes"
+  )
+);
+
 app.get("/", (req, res) => {
   res.send("Padhlo API Running");
 });

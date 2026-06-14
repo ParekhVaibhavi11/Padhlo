@@ -35,6 +35,16 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    bio: {
+      type: String,
+      default: "",
+    },
+
+    skills: {
+      type: String,
+      default: "",
+    },
+
     shortGoal: {
       type: String,
       default: "",
