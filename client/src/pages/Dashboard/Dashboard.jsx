@@ -3,10 +3,42 @@ import useAuthStore from "../../store/authStore";
 
 import StatCard from "../../components/dashboard/StatCard";
 
+import { useEffect, useState } from "react";
+
+import { getDashboardStats }
+from "../../services/dashboardServices";
+
 const Dashboard = () => {
   const user = useAuthStore(
     (state) => state.user
   );
+
+  const [stats, setStats] = useState({
+    totalTasks: 0,
+    completedTasks: 0,
+    pendingTasks: 0,
+  });
+
+  useEffect(() => {
+  const loadStats =
+    async () => {
+      try {
+
+        const data =
+          await getDashboardStats();
+
+        setStats(data);
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+    };
+
+  loadStats();
+}, []);
+
 
   return (
     <DashboardLayout>
@@ -29,18 +61,18 @@ const Dashboard = () => {
 
           <StatCard
             title="Tasks"
-            value="0"
+            value={stats.totalTasks}
           />
 
           <StatCard
-            title="Classrooms"
-            value="0"
-          />
+            title="Completed"
+            value={stats.completedTasks}
+            />
 
           <StatCard
-            title="Study Materials"
-            value="0"
-          />
+            title="Pending"
+            value={stats.pendingTasks}
+            />
 
           <StatCard
             title="Streak"
