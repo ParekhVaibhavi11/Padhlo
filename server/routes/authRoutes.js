@@ -15,5 +15,7 @@ const {
 router.post("/register", registerUser);
 
 router.post("/login", loginUser);
+
 router.get("/me", protect, getCurrentUser);
+
 module.exports = router;

@@ -20,13 +20,14 @@ const protect = async (req, res, next) => {
         decoded.id
       ).select("-password");
 
-      next();
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "Not authorized",
-      });
+      return next();
     }
+
+    return res.status(401).json({
+      success: false,
+      message: "Not authorized",
+    });
+
   } catch (error) {
     return res.status(401).json({
       success: false,
@@ -35,4 +36,8 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+
+
+module.exports = {
+  protect,
+};

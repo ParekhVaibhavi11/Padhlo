@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { loginUser } from "../../services/authService";
+import { registerUser } from "../../services/authService";
 import useAuthStore from "../../store/authStore";
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
 
   const login = useAuthStore(
@@ -13,6 +13,7 @@ const Login = () => {
   );
 
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -35,7 +36,9 @@ const Login = () => {
       setLoading(true);
 
       const data =
-        await loginUser(formData);
+        await registerUser(
+          formData
+        );
 
       login(
         data.user,
@@ -43,7 +46,7 @@ const Login = () => {
       );
 
       toast.success(
-        "Login successful"
+        "Account created successfully"
       );
 
       navigate("/dashboard");
@@ -53,7 +56,7 @@ const Login = () => {
       toast.error(
         error.response?.data
           ?.message ||
-          "Login failed"
+          "Registration failed"
       );
 
     } finally {
@@ -69,13 +72,23 @@ const Login = () => {
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
 
         <h1 className="text-3xl font-bold text-center text-purple-700 mb-6">
-          Welcome Back
+          Create Account
         </h1>
 
         <form
           onSubmit={handleSubmit}
           className="space-y-4"
         >
+
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg"
+            required
+          />
 
           <input
             type="email"
@@ -103,21 +116,21 @@ const Login = () => {
             className="w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition"
           >
             {loading
-              ? "Logging In..."
-              : "Login"}
+              ? "Creating..."
+              : "Create Account"}
           </button>
 
         </form>
 
         <p className="text-center mt-4">
 
-          Don't have an account?
+          Already have an account?
 
           <Link
-            to="/register"
+            to="/login"
             className="text-purple-600 ml-2 font-semibold"
           >
-            Register
+            Login
           </Link>
 
         </p>
@@ -128,4 +141,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
