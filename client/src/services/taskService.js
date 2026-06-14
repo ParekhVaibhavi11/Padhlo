@@ -3,66 +3,58 @@ import axios from "axios";
 const API_URL =
   "http://localhost:5000/api/tasks";
 
-const getToken = () => {
-  return localStorage.getItem("token");
-};
+const getToken = () =>
+  localStorage.getItem("token");
 
-export const getTasks = async () => {
-  const response = await axios.get(
-    API_URL,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
+const config = () => ({
+  headers: {
+    Authorization:
+      `Bearer ${getToken()}`,
+  },
+});
 
-  return response.data;
-};
+export const getTasks =
+  async () => {
+    const response =
+      await axios.get(
+        API_URL,
+        config()
+      );
 
-export const createTask = async (
-  taskData
-) => {
-  const response = await axios.post(
-    API_URL,
-    taskData,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
+    return response.data;
+  };
 
-  return response.data;
-};
+export const createTask =
+  async (taskData) => {
+    const response =
+      await axios.post(
+        API_URL,
+        taskData,
+        config()
+      );
 
-export const completeTask = async (
-  taskId
-) => {
-  const response = await axios.put(
-    `${API_URL}/${taskId}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
+    return response.data;
+  };
 
-  return response.data;
-};
+export const completeTask =
+  async (taskId) => {
+    const response =
+      await axios.put(
+        `${API_URL}/${taskId}`,
+        {},
+        config()
+      );
 
-export const deleteTask = async (
-  taskId
-) => {
-  const response = await axios.delete(
-    `${API_URL}/${taskId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
+    return response.data;
+  };
 
-  return response.data;
-};
+export const deleteTask =
+  async (taskId) => {
+    const response =
+      await axios.delete(
+        `${API_URL}/${taskId}`,
+        config()
+      );
+
+    return response.data;
+  };

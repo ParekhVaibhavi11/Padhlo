@@ -7,11 +7,6 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
 
-    emoji: {
-      type: String,
-      default: "📚",
-    },
-
     date: {
       type: Date,
       required: true,

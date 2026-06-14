@@ -6,7 +6,6 @@ const createEvent = async (req, res) => {
     const event =
       await Event.create({
         title: req.body.title,
-        emoji: req.body.emoji,
         date: req.body.date,
         createdBy: req.user._id,
       });

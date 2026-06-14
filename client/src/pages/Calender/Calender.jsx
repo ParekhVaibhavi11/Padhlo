@@ -1,11 +1,17 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-import toast from "react-hot-toast";
+import {
+  Calendar,
+  momentLocalizer,
+} from "react-big-calendar";
+
+import moment from "moment";
+
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
+
+import toast from "react-hot-toast";
 
 import {
   getEvents,
@@ -13,42 +19,113 @@ import {
   deleteEvent,
 } from "../../services/eventService";
 
-const Calendar = () => {
+import {
+  getTasks,
+} from "../../services/taskService";
 
-  const [events,
-    setEvents] =
+const localizer =
+  momentLocalizer(moment);
+
+const CalendarPage = () => {
+
+  const [calendarEvents,
+    setCalendarEvents] =
+    useState([]);
+
+  const [upcomingItems,
+    setUpcomingItems] =
     useState([]);
 
   const [formData,
     setFormData] =
     useState({
       title: "",
-      emoji: "📚",
       date: "",
     });
 
-  const loadEvents =
+  const loadData =
     async () => {
       try {
 
-        const data =
+        const eventData =
           await getEvents();
 
-        setEvents(
-          data.events
+        const taskData =
+          await getTasks();
+
+        const events =
+          eventData.events.map(
+            (event) => ({
+              id: event._id,
+              title: event.title,
+              start: new Date(
+                event.date
+              ),
+              end: new Date(
+                event.date
+              ),
+              type: "event",
+            })
+          );
+
+        const tasks =
+  taskData.tasks
+    .filter(
+      (task) =>
+        task.deadline
+    )
+    .map(
+      (task) => ({
+        id: task._id,
+
+        title:
+          task.completed
+            ? `✓ ${task.title}`
+            : `Task: ${task.title}`,
+
+        start:
+          new Date(
+            task.deadline
+          ),
+
+        end:
+          new Date(
+            task.deadline
+          ),
+
+        type: task.completed
+          ? "completedTask"
+          : "task",
+      })
+    );
+
+        const merged =
+          [...events, ...tasks];
+
+        merged.sort(
+          (a, b) =>
+            a.start - b.start
+        );
+
+        setCalendarEvents(
+          merged
+        );
+
+        setUpcomingItems(
+          merged
         );
 
       } catch {
 
         toast.error(
-          "Failed to load events"
+          "Failed to load calendar"
         );
 
       }
     };
 
   useEffect(() => {
-    loadEvents();
+    loadData();
   }, []);
 
   const handleSubmit =
@@ -67,11 +144,10 @@ const Calendar = () => {
 
         setFormData({
           title: "",
-          emoji: "📚",
           date: "",
         });
 
-        loadEvents();
+        loadData();
 
       } catch {
 
@@ -82,154 +158,180 @@ const Calendar = () => {
       }
     };
 
-  const handleDelete =
-    async (id) => {
-      try {
-
-        await deleteEvent(id);
-
-        toast.success(
-          "Event Deleted"
-        );
-
-        loadEvents();
-
-      } catch {
-
-        toast.error(
-          "Failed to delete event"
-        );
-
-      }
-    };
-
   return (
     <DashboardLayout>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        {/* Calendar */}
 
-          <h1 className="text-2xl font-bold mb-4">
-            Calendar & Planning
-          </h1>
+        <div className="lg:col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
 
-          <form
-            onSubmit={
-              handleSubmit
-            }
-            className="space-y-4"
-          >
+          <Calendar
+  localizer={localizer}
+  events={calendarEvents}
+  startAccessor="start"
+  endAccessor="end"
 
-            <input
-              type="text"
-              placeholder="Event Title"
-              value={
-                formData.title
-              }
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  title:
-                    e.target.value,
-                })
-              }
-              className="w-full border p-3 rounded-lg"
-              required
-            />
+  eventPropGetter={(event) => {
 
-            <input
-              type="text"
-              placeholder="Emoji"
-              value={
-                formData.emoji
-              }
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  emoji:
-                    e.target.value,
-                })
-              }
-              className="w-full border p-3 rounded-lg"
-            />
+    let style = {};
 
-            <input
-              type="date"
-              value={
-                formData.date
-              }
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  date:
-                    e.target.value,
-                })
-              }
-              className="w-full border p-3 rounded-lg"
-              required
-            />
+    if (
+      event.type ===
+      "event"
+    ) {
+      style = {
+        backgroundColor:
+          "#7C3AED",
+      };
+    }
 
-            <button
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
-            >
-              Add Event
-            </button>
+    if (
+      event.type ===
+      "task"
+    ) {
+      style = {
+        backgroundColor:
+          "#DC2626",
+      };
+    }
 
-          </form>
+    if (
+      event.type ===
+      "completedTask"
+    ) {
+      style = {
+        backgroundColor:
+          "#16A34A",
+      };
+    }
+
+    return {
+      style,
+    };
+  }}
+
+  style={{
+    height: "800px",
+  }}
+/>
 
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        {/* Sidebar */}
 
-          <h2 className="text-xl font-semibold mb-4">
-            Upcoming Events
-          </h2>
+        <div className="space-y-6">
 
-          <div className="space-y-3">
+          {/* Add Event */}
 
-            {events.length === 0 ? (
-              <p className="text-gray-500">
-                No events added.
-              </p>
-            ) : (
-              events.map(
-                (event) => (
-                  <div
-                    key={event._id}
-                    className="border rounded-xl p-4 flex justify-between items-center"
-                  >
-                    <div>
+          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
 
-                      <h3 className="font-medium">
-                        {event.emoji}
-                        {" "}
-                        {event.title}
-                      </h3>
+            <h2 className="text-xl font-semibold mb-4">
+              Add Event
+            </h2>
+
+            <form
+              onSubmit={
+                handleSubmit
+              }
+              className="space-y-3"
+            >
+
+              <input
+                type="text"
+                placeholder="Event Title"
+                value={
+                  formData.title
+                }
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    title:
+                      e.target
+                        .value,
+                  })
+                }
+                className="w-full border rounded-lg p-3"
+                required
+              />
+
+              <input
+                type="date"
+                value={
+                  formData.date
+                }
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    date:
+                      e.target
+                        .value,
+                  })
+                }
+                className="w-full border rounded-lg p-3"
+                required
+              />
+
+              <button
+                className="w-full bg-purple-600 text-white py-3 rounded-lg"
+              >
+                Add Event
+              </button>
+
+            </form>
+
+          </div>
+
+          {/* Upcoming */}
+
+          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+
+            <h2 className="text-xl font-semibold mb-4">
+              Upcoming
+            </h2>
+
+            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+
+              {upcomingItems
+                .slice(0, 10)
+                .map(
+                  (
+                    item
+                  ) => (
+                    <div
+                      key={
+                        item.id
+                      }
+                      className="border rounded-lg p-3"
+                    >
+
+                      <p
+                        className={`font-medium ${
+                          item.type === "event"
+                            ? "text-purple-700"
+                            : item.type ===
+                              "completedTask"
+                            ? "text-green-700"
+                            : "text-red-700"
+                        }`}
+                      >
+                        {item.title}
+                      </p>
 
                       <p className="text-sm text-gray-500">
-                        {new Date(
-                          event.date
-                        ).toLocaleDateString()}
+                        {moment(
+                          item.start
+                        ).format(
+                          "DD MMM YYYY"
+                        )}
                       </p>
 
                     </div>
+                  )
+                )}
 
-                    <button
-                      onClick={() =>
-                        handleDelete(
-                          event._id
-                        )
-                      }
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                    >
-                      Delete
-                    </button>
-
-                  </div>
-                )
-              )
-            )}
+            </div>
 
           </div>
 
@@ -241,4 +343,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default CalendarPage;
