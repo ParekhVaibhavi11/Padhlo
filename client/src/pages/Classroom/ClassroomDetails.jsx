@@ -98,6 +98,44 @@ const isCreator =
   classroom.createdBy?._id?.toString() ===
   currentUserId?.toString();
 
+  const progressData = {};
+
+tasks.forEach((task) => {
+  task.completedBy?.forEach(
+    (member) => {
+      const memberId =
+        member._id;
+
+      if (
+        !progressData[
+          memberId
+        ]
+      ) {
+        progressData[
+          memberId
+        ] = {
+          name:
+            member.name,
+          completed: 0,
+        };
+      }
+
+      progressData[
+        memberId
+      ].completed += 1;
+    }
+  );
+});
+
+const leaderboard =
+  Object.values(
+    progressData
+  ).sort(
+    (a, b) =>
+      b.completed -
+      a.completed
+  );
+
   const handleCreateTask =
     async (e) => {
       e.preventDefault();
@@ -290,6 +328,109 @@ const isCreator =
           </div>
 
         </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+
+  <h2 className="text-xl font-semibold mb-4">
+    Progress Tracking
+  </h2>
+
+  <div className="space-y-3">
+
+    {classroom.members.map(
+      (member) => {
+        const memberProgress =
+          progressData[
+            member._id
+          ];
+
+        return (
+          <div
+            key={
+              member._id
+            }
+            className="border rounded-lg p-3"
+          >
+            <div className="flex justify-between">
+
+              <span>
+                {member.name}
+              </span>
+
+              <span className="font-medium text-purple-700">
+
+                {
+                  memberProgress
+                    ?.completed ||
+                    0
+                }
+                /
+                {
+                  tasks.length
+                }
+
+              </span>
+
+            </div>
+
+          </div>
+        );
+      }
+    )}
+
+  </div>
+
+</div>
+
+<div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+
+  <h2 className="text-xl font-semibold mb-4">
+    🏆 Leaderboard
+  </h2>
+
+  <div className="space-y-3">
+
+    {leaderboard.length ===
+    0 ? (
+      <p className="text-gray-500">
+        No progress yet.
+      </p>
+    ) : (
+      leaderboard.map(
+        (
+          member,
+          index
+        ) => (
+          <div
+            key={
+              member.name
+            }
+            className="flex justify-between border rounded-lg p-3"
+          >
+            <span>
+
+              #{index + 1}
+              {" "}
+              {member.name}
+
+            </span>
+
+            <span className="font-semibold text-purple-700">
+              {
+                member.completed
+              }
+              {" "}
+              Tasks
+            </span>
+
+          </div>
+        )
+      )
+    )}
+
+  </div>
+
+</div>
 
       </div>
     </DashboardLayout>
