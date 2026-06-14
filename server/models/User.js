@@ -60,6 +60,11 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
+    lastTaskCompletedDate: {
+  type: Date,
+  default: null,
+},
+
     role: {
       type: String,
       default: "student",

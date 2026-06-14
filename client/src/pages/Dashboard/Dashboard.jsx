@@ -8,10 +8,13 @@ import { useEffect, useState } from "react";
 import { getDashboardStats }
 from "../../services/dashboardServices";
 
+
+
 const Dashboard = () => {
   const user = useAuthStore(
     (state) => state.user
   );
+  console.log(user);
 
   const [stats, setStats] = useState({
     totalTasks: 0,
@@ -76,7 +79,7 @@ const Dashboard = () => {
 
           <StatCard
             title="Streak"
-            value="0 Days"
+            value={user?.streak ? `${user.streak} Days` : "0 Days"}
           />
 
         </div>

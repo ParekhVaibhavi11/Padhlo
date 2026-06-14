@@ -1,5 +1,7 @@
 const Task = require("../models/Task");
 
+const User = require("../models/User");
+
 const createTask = async (req, res) => {
   try {
     const {
@@ -73,6 +75,82 @@ const completeTask = async (req, res) => {
 
     await task.save();
 
+    if (task.completed) {
+
+      console.log("TASK COMPLETED");
+console.log("USER ID:", req.user._id);
+
+      const user =
+        await User.findById(
+          req.user._id
+        );
+
+      const today =
+        new Date();
+
+      today.setHours(
+        0, 0, 0, 0
+      );
+
+      if (
+        !user.lastTaskCompletedDate
+      ) {
+
+        user.streak = 1;
+
+      } else {
+
+        const lastDate =
+          new Date(
+            user.lastTaskCompletedDate
+          );
+
+        lastDate.setHours(
+          0, 0, 0, 0
+        );
+
+        const diffDays =
+          Math.floor(
+            (
+              today -
+              lastDate
+            ) /
+            (
+              1000 *
+              60 *
+              60 *
+              24
+            )
+          );
+
+        if (
+          diffDays === 1
+        ) {
+
+          user.streak += 1;
+
+        } else if (
+          diffDays > 1
+        ) {
+
+          user.streak = 1;
+
+        }
+
+      }
+
+      user.lastTaskCompletedDate =
+        today;
+        console.log("NEW STREAK:", user.streak);
+console.log(
+  "LAST DATE:",
+  user.lastTaskCompletedDate
+);
+
+      await user.save();
+
+    }
+
     res.status(200).json({
       success: true,
       task,
@@ -87,7 +165,6 @@ const completeTask = async (req, res) => {
 
   }
 };
-
 const deleteTask = async (req, res) => {
   try {
 

@@ -9,6 +9,8 @@ import Profile from "../pages/Profile/Profile";
 import Classroom from "../pages/Classroom/Classroom";
 import Calendar from "../pages/Calender/Calender";
 import Materials from "../pages/Materials/Materials";
+import Leaderboard
+from "../pages/Leaderboard/Leaderboard";
 
 const AppRoutes = () => {
   return (
@@ -91,6 +93,15 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+       <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute>
+            <Leaderboard />
+              </ProtectedRoute>
+          }
+        /> 
+
 
       </Routes>
     </BrowserRouter>

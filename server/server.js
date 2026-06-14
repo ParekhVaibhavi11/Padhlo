@@ -63,6 +63,13 @@ app.use(
   )
 );
 
+app.use(
+  "/api/leaderboard",
+  require(
+    "./routes/leaderboardRoutes"
+  )
+);
+
 app.get("/", (req, res) => {
   res.send("Padhlo API Running");
 });

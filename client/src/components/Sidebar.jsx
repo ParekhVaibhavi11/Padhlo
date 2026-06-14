@@ -7,6 +7,7 @@ import {
   HiCalendar,
   HiAcademicCap,
   HiCollection,
+  HiStar,
 } from "react-icons/hi";
 
 const Sidebar = ({ isOpen }) => {
@@ -41,6 +42,12 @@ const Sidebar = ({ isOpen }) => {
       path: "/profile",
       icon: <HiUser />,
     },
+{
+  name: "Leaderboard",
+  path: "/leaderboard",
+  icon: <HiStar />,
+}
+
   ];
 
   return (
