@@ -25,6 +25,14 @@ import {
   completeClassroomTask,
 } from "../../services/classroomTaskService";
 
+import ClassroomNoteCard from "../../components/classroom/ClassroomNoteCard";
+
+import {
+  getNotes,
+  uploadNote,
+  shareNoteLink,
+} from "../../services/classroomNoteService";
+
 const ClassroomDetails = () => {
   const { id } = useParams();
 
@@ -57,6 +65,45 @@ const ClassroomDetails = () => {
     }
   };
 
+  const [notes, setNotes] =
+  useState([]);
+
+const [noteTitle,
+  setNoteTitle] =
+  useState("");
+
+const [selectedFile,
+  setSelectedFile] =
+  useState(null);
+
+const [linkTitle,
+  setLinkTitle] =
+  useState("");
+
+const [linkUrl,
+  setLinkUrl] =
+  useState("");
+
+  const loadNotes =
+  async () => {
+    try {
+
+      const data =
+        await getNotes(id);
+
+      setNotes(
+        data.notes
+      );
+
+    } catch (error) {
+
+      toast.error(
+        "Failed to load notes"
+      );
+
+    }
+  };
+
   useEffect(() => {
     const loadClassroom =
       async () => {
@@ -76,6 +123,7 @@ const ClassroomDetails = () => {
 
     loadClassroom();
     loadTasks();
+    loadNotes();
   }, [id]);
 
   if (!classroom) {
@@ -126,6 +174,8 @@ tasks.forEach((task) => {
     }
   );
 });
+
+
 
 const leaderboard =
   Object.values(
@@ -183,6 +233,83 @@ const leaderboard =
         );
       }
     };
+
+const handleUploadNote =
+  async (e) => {
+    e.preventDefault();
+
+    try {
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "title",
+        noteTitle
+      );
+
+      formData.append(
+        "file",
+        selectedFile
+      );
+
+      await uploadNote(
+        id,
+        formData
+      );
+
+      toast.success(
+        "Note uploaded"
+      );
+
+      setNoteTitle("");
+      setSelectedFile(
+        null
+      );
+
+      loadNotes();
+
+    } catch (error) {
+
+      toast.error(
+        "Upload failed"
+      );
+
+    }
+  };
+
+  const handleShareLink =
+  async (e) => {
+    e.preventDefault();
+
+    try {
+
+      await shareNoteLink(
+        id,
+        {
+          title:
+            linkTitle,
+          linkUrl,
+        }
+      );
+
+      toast.success(
+        "Link shared"
+      );
+
+      setLinkTitle("");
+      setLinkUrl("");
+
+      loadNotes();
+
+    } catch (error) {
+
+      toast.error(
+        "Failed to share link"
+      );
+
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -426,6 +553,121 @@ const leaderboard =
           </div>
         )
       )
+    )}
+
+  </div>
+
+</div>
+
+<div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+
+  <h2 className="text-xl font-semibold mb-6">
+    Notes & Resources
+  </h2>
+
+  {/* Upload File */}
+
+  <form
+    onSubmit={handleUploadNote}
+    className="space-y-3 mb-8"
+  >
+
+    <h3 className="font-medium">
+      Upload Note
+    </h3>
+
+    <input
+      type="text"
+      placeholder="Note Title"
+      value={noteTitle}
+      onChange={(e) =>
+        setNoteTitle(
+          e.target.value
+        )
+      }
+      className="w-full border p-3 rounded-lg"
+      required
+    />
+
+    <input
+      type="file"
+      onChange={(e) =>
+        setSelectedFile(
+          e.target.files[0]
+        )
+      }
+      className="w-full border p-3 rounded-lg"
+      required
+    />
+
+    <button
+      className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
+    >
+      Upload Note
+    </button>
+
+  </form>
+
+  {/* Share Link */}
+
+  <form
+    onSubmit={handleShareLink}
+    className="space-y-3 mb-8"
+  >
+
+    <h3 className="font-medium">
+      Share Resource Link
+    </h3>
+
+    <input
+      type="text"
+      placeholder="Link Title"
+      value={linkTitle}
+      onChange={(e) =>
+        setLinkTitle(
+          e.target.value
+        )
+      }
+      className="w-full border p-3 rounded-lg"
+      required
+    />
+
+    <input
+      type="url"
+      placeholder="https://..."
+      value={linkUrl}
+      onChange={(e) =>
+        setLinkUrl(
+          e.target.value
+        )
+      }
+      className="w-full border p-3 rounded-lg"
+      required
+    />
+
+    <button
+      className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
+    >
+      Share Link
+    </button>
+
+  </form>
+
+  {/* Notes List */}
+
+  <div className="space-y-3">
+
+    {notes.length === 0 ? (
+      <p className="text-gray-500">
+        No notes shared yet.
+      </p>
+    ) : (
+      notes.map((note) => (
+        <ClassroomNoteCard
+          key={note._id}
+          note={note}
+        />
+      ))
     )}
 
   </div>

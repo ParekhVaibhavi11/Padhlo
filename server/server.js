@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+
+
+
 const express = require("express");
 const cors = require("cors");
 
@@ -31,6 +34,13 @@ app.use(
   "/api/classrooms",
   require(
     "./routes/classroomTaskRoutes"
+  )
+);
+
+app.use(
+  "/api/classrooms",
+  require(
+    "./routes/classroomNoteRoutes"
   )
 );
 
