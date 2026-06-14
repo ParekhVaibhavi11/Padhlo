@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  "http://localhost:5000/api/events";
+  `${import.meta.env.VITE_API_URL}/events`;
 
 const getToken = () =>
   localStorage.getItem("token");
