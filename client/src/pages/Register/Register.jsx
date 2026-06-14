@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 import { registerUser } from "../../services/authService";
 import useAuthStore from "../../store/authStore";
@@ -17,6 +18,14 @@ const Register = () => {
     email: "",
     password: "",
   });
+
+    useEffect(() => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+    });
+  }, []);
 
   const [loading, setLoading] =
     useState(false);
@@ -76,6 +85,7 @@ const Register = () => {
         </h1>
 
         <form
+          autoCapitalize="off"
           onSubmit={handleSubmit}
           className="space-y-4"
         >
@@ -83,9 +93,10 @@ const Register = () => {
           <input
             type="text"
             name="name"
-            placeholder="Full Name"
+            autoComplete="off"
             value={formData.name}
             onChange={handleChange}
+            placeholder="Full Name"
             className="w-full border p-3 rounded-lg"
             required
           />
@@ -93,6 +104,7 @@ const Register = () => {
           <input
             type="email"
             name="email"
+            autoComplete="off"
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
@@ -103,6 +115,7 @@ const Register = () => {
           <input
             type="password"
             name="password"
+            autoComplete="off"
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
