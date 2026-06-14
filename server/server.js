@@ -56,6 +56,13 @@ app.use(
   )
 );
 
+app.use(
+  "/api/materials",
+  require(
+    "./routes/materialRoutes"
+  )
+);
+
 app.get("/", (req, res) => {
   res.send("Padhlo API Running");
 });
