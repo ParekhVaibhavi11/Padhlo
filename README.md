@@ -4,6 +4,12 @@ Padhlo is a full-stack MERN application designed to help students collaborate, m
 
 ---
 
+## 🌐 Live Demo
+
+🔗 https://padhlo-six.vercel.app/login
+
+---
+
 ## 🚀 Features
 
 ### 👤 Authentication
@@ -127,3 +133,5 @@ Parekh Vaibhavi
 Computer Science & Engineering Student
 
 Passionate about Full Stack Development, UI Design, and Educational Technology.
+
+
