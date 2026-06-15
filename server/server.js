@@ -26,7 +26,7 @@ app.use(
 app.use(
   "/api/classrooms",
   require(
-    "./routes/classroomRoutes"
+    "./routes/ClassroomRoutes"
   )
 );
 
