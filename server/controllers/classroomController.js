@@ -171,10 +171,63 @@ const getClassroomById =
 
     }
   };
+
+  const deleteClassroom =
+  async (req, res) => {
+    try {
+ 
+      console.log("DELETE ROUTE HIT");
+      console.log("CLASSROOM ID:", req.params.id);
+      console.log("USER ID:", req.user._id);
+
+      const classroom =
+        await Classroom.findById(
+          req.params.id
+        );
+
+        console.log("CLASSROOM:", classroom);
+      if (!classroom) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Classroom not found",
+        });
+      }
+
+      if (
+        classroom.createdBy.toString() !==
+        req.user._id.toString()
+      ) {
+        return res.status(403).json({
+          success: false,
+          message:
+            "Only creator can delete classroom",
+        });
+      }
+
+      await classroom.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Classroom deleted",
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+
+    }
+};
   
 module.exports = {
   createClassroom,
+  joinClassroom,
   getClassrooms,
-   joinClassroom,
-   getClassroomById,
+  getClassroomById,
+  deleteClassroom,
 };

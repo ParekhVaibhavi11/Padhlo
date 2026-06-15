@@ -7,12 +7,13 @@ const router =
 
 const {
   createClassroom,
-  getClassrooms,
   joinClassroom,
+  getClassrooms,
   getClassroomById,
+  deleteClassroom,
 } = require(
   "../controllers/classroomController"
-); 
+);
 
 
 const {
@@ -43,6 +44,12 @@ router.post(
   "/join",
   protect,
   joinClassroom
+);
+
+router.delete(
+  "/:id",
+  protect,
+  deleteClassroom
 );
 
 module.exports = router;

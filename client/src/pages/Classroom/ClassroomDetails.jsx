@@ -1,23 +1,13 @@
-import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  useParams,
-} from "react-router-dom";
+import { useEffect, useState, } from "react";
+import { useParams, } from "react-router-dom";
+import { useNavigate, } from "react-router-dom";
 
 import toast from "react-hot-toast";
-
 import DashboardLayout from "../../layouts/DashboardLayout";
-
 import useAuthStore from "../../store/authStore";
-
 import ClassroomTaskCard from "../../components/classroom/ClassroomTaskCard";
 
-import {
-  getClassroomById,
-} from "../../services/classroomService";
+import { getClassroomById, deleteClassroom, } from "../../services/classroomService";
 
 import {
   getClassroomTasks,
@@ -26,7 +16,6 @@ import {
 } from "../../services/classroomTaskService";
 
 import ClassroomNoteCard from "../../components/classroom/ClassroomNoteCard";
-
 import {
   getNotes,
   uploadNote,
@@ -35,6 +24,9 @@ import {
 
 const ClassroomDetails = () => {
   const { id } = useParams();
+
+  const navigate =
+    useNavigate();
 
   const [classroom, setClassroom] =
     useState(null);
@@ -65,44 +57,44 @@ const ClassroomDetails = () => {
     }
   };
 
-  const [notes, setNotes] =
-  useState([]);
+        const [notes, setNotes] =
+        useState([]);
 
-const [noteTitle,
-  setNoteTitle] =
-  useState("");
+        const [noteTitle,
+          setNoteTitle] =
+          useState("");
 
-const [selectedFile,
-  setSelectedFile] =
-  useState(null);
+        const [selectedFile,
+          setSelectedFile] =
+          useState(null);
 
-const [linkTitle,
-  setLinkTitle] =
-  useState("");
+        const [linkTitle,
+          setLinkTitle] =
+          useState("");
 
-const [linkUrl,
-  setLinkUrl] =
-  useState("");
+        const [linkUrl,
+          setLinkUrl] =
+          useState("");
 
-  const loadNotes =
-  async () => {
-    try {
+        const loadNotes =
+        async () => {
+          try {
 
-      const data =
-        await getNotes(id);
+        const data =
+          await getNotes(id);
 
-      setNotes(
-        data.notes
-      );
+          setNotes(
+            data.notes
+          );
 
     } catch (error) {
 
-      toast.error(
-        "Failed to load notes"
-      );
+        toast.error(
+          "Failed to load notes"
+        );
 
-    }
-  };
+      }
+    };
 
   useEffect(() => {
     const loadClassroom =
@@ -138,7 +130,6 @@ const [linkUrl,
     );
   }
 
- 
 const currentUserId =
   user?._id || user?.id;
 
@@ -146,7 +137,7 @@ const isCreator =
   classroom.createdBy?._id?.toString() ===
   currentUserId?.toString();
 
-  const progressData = {};
+const progressData = {};
 
 tasks.forEach((task) => {
   task.completedBy?.forEach(
@@ -174,8 +165,6 @@ tasks.forEach((task) => {
     }
   );
 });
-
-
 
 const leaderboard =
   Object.values(
@@ -311,33 +300,89 @@ const handleUploadNote =
     }
   };
 
-  return (
+  const handleDeleteClassroom =
+  async () => {
+
+    const confirmDelete =
+      window.confirm(
+        "Delete this classroom?"
+      );
+
+    if (!confirmDelete)
+      return;
+
+    try {
+
+      await deleteClassroom(id);
+
+      toast.success(
+        "Classroom deleted"
+      );
+
+      navigate(
+        "/Classroom"
+      );
+
+    } catch (error) {
+
+      toast.error(
+        error.response?.data
+          ?.message ||
+          "Failed"
+      );
+
+    }
+};
+
+
+return (
     <DashboardLayout>
       <div className="space-y-6">
 
-        {/* Classroom Info */}
+       {/* Classroom Info */}
 
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
 
-          <h1 className="text-3xl font-bold">
-            {classroom.name}
-          </h1>
+        <div className="flex justify-between items-start">
 
-          <p className="text-gray-500 mt-2">
-            {classroom.description}
-          </p>
+          <div>
 
-          <div className="mt-4">
-            <p className="text-sm text-gray-500">
-              Room Code
+            <h1 className="text-3xl font-bold">
+              {classroom.name}
+            </h1>
+
+            <p className="text-gray-500 mt-2">
+              {classroom.description}
             </p>
 
-            <p className="font-semibold text-purple-700 tracking-wider">
-              {classroom.roomCode}
-            </p>
+            <div className="mt-4">
+              <p className="text-sm text-gray-500">
+                Room Code
+              </p>
+
+              <p className="font-semibold text-purple-700 tracking-wider">
+                {classroom.roomCode}
+              </p>
+            </div>
+
           </div>
 
-        </div>
+    {isCreator && (
+
+      <button
+        onClick={handleDeleteClassroom}
+        className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
+      >
+        Delete Classroom
+      </button>
+
+    )}
+
+    
+
+  </div>
+
+</div>
 
         {/* Members */}
 

@@ -71,3 +71,20 @@ export const joinClassroom =
 
     return response.data;
   };
+
+  export const deleteClassroom =
+  async (id) => {
+
+    const response =
+      await axios.delete(
+        `${API_URL}/${id}`,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${getToken()}`
+          }
+        }
+      );
+
+    return response.data;
+};
