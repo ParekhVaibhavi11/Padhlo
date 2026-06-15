@@ -155,13 +155,14 @@ tasks.forEach((task) => {
           memberId
         ]
       ) {
-        progressData[
-          memberId
-        ] = {
-          name:
-            member.name,
-          completed: 0,
-        };
+       progressData[
+  memberId
+] = {
+  id: memberId,
+  name:
+    member.name,
+  completed: 0,
+};
       }
 
       progressData[
@@ -171,14 +172,48 @@ tasks.forEach((task) => {
   );
 });
 
+const memberIds =
+  classroom.members.map(
+    (member) =>
+      member._id.toString()
+  );
+
+Object.keys(
+  progressData
+).forEach(
+  (memberId) => {
+
+    if (
+      !memberIds.includes(
+        memberId
+      )
+    ) {
+
+      delete progressData[
+        memberId
+      ];
+
+    }
+
+  }
+);
+
+
 const leaderboard =
   Object.values(
     progressData
-  ).sort(
-    (a, b) =>
-      b.completed -
-      a.completed
-  );
+  )
+    .filter(
+      (member) =>
+        memberIds.includes(
+          member.id
+        )
+    )
+    .sort(
+      (a, b) =>
+        b.completed -
+        a.completed
+    );
 
   const handleCreateTask =
     async (e) => {
@@ -625,7 +660,7 @@ return (
           >
             <span>
 
-              #{index + 1}
+              {index + 1}.
               {" "}
               {member.name}
 
