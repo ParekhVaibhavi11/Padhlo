@@ -6,7 +6,8 @@ import toast from "react-hot-toast";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import useAuthStore from "../../store/authStore";
 import ClassroomTaskCard from "../../components/classroom/ClassroomTaskCard";
-
+import ClassroomChat
+from "../../components/classroom/ClassroomChat";
 import { 
   getClassroomById, 
   deleteClassroom, 
@@ -761,6 +762,9 @@ return (
   </div>
 
 </div>
+<ClassroomChat
+  classroomId={id}
+/>
 
       </div>
     </DashboardLayout>
