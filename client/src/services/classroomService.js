@@ -88,3 +88,21 @@ export const joinClassroom =
 
     return response.data;
 };
+
+export const leaveClassroom =
+  async (id) => {
+
+    const response =
+      await axios.put(
+        `${API_URL}/${id}/leave`,
+        {},
+        {
+          headers: {
+            Authorization:
+              `Bearer ${getToken()}`
+          }
+        }
+      );
+
+    return response.data;
+};

@@ -11,6 +11,7 @@ const {
   getClassrooms,
   getClassroomById,
   deleteClassroom,
+  leaveClassroom,
 } = require(
   "../controllers/classroomController"
 );
@@ -51,5 +52,13 @@ router.delete(
   protect,
   deleteClassroom
 );
+
+router.put(
+  "/:id/leave",
+  protect,
+  leaveClassroom
+);
+
+
 
 module.exports = router;

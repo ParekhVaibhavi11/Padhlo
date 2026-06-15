@@ -7,7 +7,11 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import useAuthStore from "../../store/authStore";
 import ClassroomTaskCard from "../../components/classroom/ClassroomTaskCard";
 
-import { getClassroomById, deleteClassroom, } from "../../services/classroomService";
+import { 
+  getClassroomById, 
+  deleteClassroom, 
+  leaveClassroom
+} from "../../services/classroomService";
 
 import {
   getClassroomTasks,
@@ -334,6 +338,38 @@ const handleUploadNote =
     }
 };
 
+const handleLeaveClassroom =
+  async () => {
+
+    const confirmLeave =
+      window.confirm(
+        "Leave this classroom?"
+      );
+
+    if (!confirmLeave)
+      return;
+
+    try {
+
+      await leaveClassroom(id);
+
+      toast.success(
+        "Left classroom"
+      );
+
+      navigate("/classroom");
+
+    } catch (error) {
+
+      toast.error(
+        error.response?.data
+          ?.message ||
+          "Failed to leave classroom"
+      );
+
+    }
+};
+
 
 return (
     <DashboardLayout>
@@ -345,42 +381,49 @@ return (
 
         <div className="flex justify-between items-start">
 
-          <div>
+            <div>
 
-            <h1 className="text-3xl font-bold">
-              {classroom.name}
-            </h1>
+              <h1 className="text-3xl font-bold">
+                {classroom.name}
+              </h1>
 
-            <p className="text-gray-500 mt-2">
-              {classroom.description}
-            </p>
-
-            <div className="mt-4">
-              <p className="text-sm text-gray-500">
-                Room Code
+              <p className="text-gray-500 mt-2">
+                {classroom.description}
               </p>
 
-              <p className="font-semibold text-purple-700 tracking-wider">
-                {classroom.roomCode}
-              </p>
+              <div className="mt-4">
+                <p className="text-sm text-gray-500">
+                  Room Code
+                </p>
+
+                <p className="font-semibold text-purple-700 tracking-wider">
+                  {classroom.roomCode}
+                </p>
+              </div>
+
             </div>
 
+            {isCreator ? (
+
+              <button
+                onClick={handleDeleteClassroom}
+                className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
+              >
+                Delete Classroom
+              </button>
+
+            ) : (
+
+              <button
+                onClick={handleLeaveClassroom}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition"
+              >
+                Leave Classroom
+              </button>
+
+            )}
+
           </div>
-
-    {isCreator && (
-
-      <button
-        onClick={handleDeleteClassroom}
-        className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
-      >
-        Delete Classroom
-      </button>
-
-    )}
-
-    
-
-  </div>
 
 </div>
 

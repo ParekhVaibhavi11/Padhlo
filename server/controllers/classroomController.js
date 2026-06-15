@@ -224,10 +224,62 @@ const getClassroomById =
     }
 };
   
+const leaveClassroom =
+  async (req, res) => {
+    try {
+
+      const classroom =
+        await Classroom.findById(
+          req.params.id
+        );
+
+      if (!classroom) {
+        return res.status(404).json({
+          success: false,
+          message: "Classroom not found",
+        });
+      }
+
+      if (
+        classroom.createdBy.toString() ===
+        req.user._id.toString()
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Creator cannot leave classroom. Delete it instead.",
+        });
+      }
+
+      classroom.members =
+        classroom.members.filter(
+          (memberId) =>
+            memberId.toString() !==
+            req.user._id.toString()
+        );
+
+      await classroom.save();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Left classroom successfully",
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+
+    }
+};
 module.exports = {
   createClassroom,
   joinClassroom,
   getClassrooms,
   getClassroomById,
   deleteClassroom,
+  leaveClassroom,
 };
