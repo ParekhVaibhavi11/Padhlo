@@ -119,10 +119,20 @@ socket.on(
 );
 
     return () => {
-      socket.off(
-        "receiveMessage"
-      );
-    };
+
+  socket.off(
+    "receiveMessage"
+  );
+
+  socket.off(
+    "messageDeleted"
+  );
+
+  socket.off(
+    "messageEdited"
+  );
+
+};
 
   }, [classroomId]);
 

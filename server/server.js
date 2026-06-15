@@ -129,12 +129,12 @@ socket.on(
   }
 );
 
-        io.to(
-          data.classroomId
-        ).emit(
-          "receiveMessage",
-          data
-        );
+socket.to(
+  data.classroomId
+).emit(
+  "receiveMessage",
+  data
+);
 
       }
     );
