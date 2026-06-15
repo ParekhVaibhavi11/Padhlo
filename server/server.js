@@ -101,6 +101,33 @@ io.on(
     socket.on(
       "sendMessage",
       (data) => {
+        socket.on(
+  "messageDeleted",
+  (data) => {
+
+    io.to(
+      data.classroomId
+    ).emit(
+      "messageDeleted",
+      data
+    );
+
+  }
+);
+
+socket.on(
+  "messageEdited",
+  (data) => {
+
+    io.to(
+      data.classroomId
+    ).emit(
+      "messageEdited",
+      data
+    );
+
+  }
+);
 
         io.to(
           data.classroomId

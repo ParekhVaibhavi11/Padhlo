@@ -13,6 +13,8 @@ const {
 const {
   getMessages,
   saveMessage,
+  editMessage,
+deleteMessage,
 } = require(
   "../controllers/classroomChatController"
 );
@@ -27,6 +29,18 @@ router.post(
   "/:id/chat",
   protect,
   saveMessage
+);
+
+router.put(
+  "/chat/message/:messageId",
+  protect,
+  editMessage
+);
+
+router.delete(
+  "/chat/message/:messageId",
+  protect,
+  deleteMessage
 );
 
 module.exports =

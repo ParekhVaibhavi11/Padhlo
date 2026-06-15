@@ -43,3 +43,41 @@ export const saveMessage =
 
     return response.data;
 };
+
+export const deleteMessage =
+  async (messageId) => {
+
+    const response =
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/classrooms/chat/message/${messageId}`,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${getToken()}`
+          }
+        }
+      );
+
+    return response.data;
+};
+
+export const editMessage =
+  async (
+    messageId,
+    message
+  ) => {
+
+    const response =
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/classrooms/chat/message/${messageId}`,
+        { message },
+        {
+          headers: {
+            Authorization:
+              `Bearer ${getToken()}`
+          }
+        }
+      );
+
+    return response.data;
+};

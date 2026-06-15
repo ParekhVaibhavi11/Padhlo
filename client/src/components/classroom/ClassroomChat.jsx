@@ -10,10 +10,17 @@ from "socket.io-client";
 import {
   getMessages,
   saveMessage,
+  deleteMessage,
+  editMessage,
 } from "../../services/chatService";
 
 import useAuthStore
 from "../../store/authStore";
+
+import {
+  HiOutlineDotsVertical
+}
+from "react-icons/hi";
 
 const socket =
   io(
@@ -39,8 +46,14 @@ const ClassroomChat = ({
     setMessage] =
     useState("");
 
+  const [openMenu,
+  setOpenMenu] =
+  useState(null);
+
   const messagesEndRef =
     useRef(null);
+
+ 
 
   useEffect(() => {
 
@@ -64,6 +77,46 @@ const ClassroomChat = ({
 
       }
     );
+
+    socket.on(
+  "messageDeleted",
+  ({ messageId }) => {
+
+    setMessages(
+      (prev) =>
+        prev.filter(
+          (msg) =>
+            msg._id !==
+            messageId
+        )
+    );
+
+  }
+);
+
+socket.on(
+  "messageEdited",
+  ({
+    messageId,
+    message,
+  }) => {
+
+    setMessages(
+      (prev) =>
+        prev.map(
+          (msg) =>
+            msg._id ===
+            messageId
+              ? {
+                  ...msg,
+                  message,
+                }
+              : msg
+        )
+    );
+
+  }
+);
 
     return () => {
       socket.off(
@@ -128,14 +181,7 @@ const ClassroomChat = ({
           "sendMessage",
           {
             classroomId,
-
-            senderName:
-              user.name,
-
-            message,
-
-            createdAt:
-              new Date(),
+            ...data.message
           }
         );
 
@@ -150,7 +196,99 @@ const ClassroomChat = ({
       }
     };
 
-  return (
+   const handleDelete =
+  async (
+    messageId
+  ) => {
+
+    try {
+
+      await deleteMessage(
+        messageId
+      );
+
+      socket.emit(
+        "messageDeleted",
+        {
+          classroomId,
+          messageId,
+        }
+      );
+
+      setMessages(
+        (prev) =>
+          prev.filter(
+            (msg) =>
+              msg._id !==
+              messageId
+          )
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+};
+
+const handleEdit =
+  async (msg) => {
+
+    const updatedMessage =
+      prompt(
+        "Edit Message",
+        msg.message
+      );
+
+    if (
+      !updatedMessage
+    ) return;
+
+    try {
+
+      await editMessage(
+        msg._id,
+        updatedMessage
+      );
+
+      socket.emit(
+        "messageEdited",
+        {
+          classroomId,
+
+          messageId:
+            msg._id,
+
+          message:
+            updatedMessage,
+        }
+      );
+
+      setMessages(
+        (prev) =>
+          prev.map(
+            (message) =>
+              message._id ===
+              msg._id
+                ? {
+                    ...message,
+                    message:
+                      updatedMessage,
+                  }
+                : message
+          )
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+};
+
+return (
 
     <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
 
@@ -176,7 +314,7 @@ const ClassroomChat = ({
             ) => (
 
               <div
-                key={index}
+                key={msg._id}
                 className={`mb-3 flex ${
                   msg.senderName ===
                   user?.name
@@ -193,16 +331,72 @@ const ClassroomChat = ({
                 }`}>
 
                   <p className="text-xs font-semibold mb-1">
-                    {
-                      msg.senderName
-                    }
+                    {msg.senderName}
                   </p>
 
-                  <p>
-                    {
-                      msg.message
-                    }
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+
+  <p className="break-words">
+    {msg.message}
+  </p>
+
+  {msg.senderName ===
+    user?.name && (
+
+    <div className="relative">
+
+      <button
+        onClick={() =>
+          setOpenMenu(
+            openMenu ===
+              msg._id
+              ? null
+              : msg._id
+          )
+        }
+        className="text-gray-400 hover:text-gray-700 text-lg font-bold"
+      >
+        <HiOutlineDotsVertical
+         size={18}
+          />
+      </button>
+
+      {openMenu ===
+        msg._id && (
+
+        <div className="absolute right-0 top-7 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[160px]">
+
+              <button
+                onClick={() => {
+                  handleEdit(msg);
+                  setOpenMenu(null);
+                }}
+                 className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm text-gray-800"
+                 >
+                Edit Message
+              </button>
+
+              <button
+                onClick={() => {
+                  handleDelete(
+                    msg._id
+                  );
+                  setOpenMenu(null);
+                }}
+                 className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm text-gray-800"
+              >
+                Delete Message
+              </button>
+
+            </div>
+
+          )}
+
+        </div>
+
+  )}
+
+</div>
 
                 </div>
 
