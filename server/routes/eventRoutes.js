@@ -8,7 +8,7 @@ const {
   getEvents,
   deleteEvent,
 } = require(
-  "../controllers/eventController"
+  "../controllers/EventController"
 );
 
 const {
