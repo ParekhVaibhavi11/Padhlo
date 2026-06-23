@@ -35,9 +35,14 @@ const cloudinary =
 
         noteType: "file",
 
-        fileUrl: result.secure_url,
+        fileUrl:
+          result.secure_url,
 
-        uploadedBy: req.user._id,
+        publicId:
+          result.public_id,
+
+        uploadedBy:
+          req.user._id,
       });
 
     res.status(201).json({
@@ -120,7 +125,7 @@ const cloudinary =
 }
   };
 
-  const deleteNote =
+const deleteNote =
   async (req, res) => {
 
     try {
@@ -137,6 +142,20 @@ const cloudinary =
           message:
             "Note not found",
         });
+
+      }
+
+      if (
+        note.publicId
+      ) {
+
+        await cloudinary.uploader.destroy(
+          note.publicId,
+          {
+            resource_type:
+              "raw",
+          }
+        );
 
       }
 

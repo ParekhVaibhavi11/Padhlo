@@ -20,22 +20,25 @@ const uploadMaterial =
         );
 
       const material =
-        await Material.create({
-          user:
-            req.user._id,
+      await Material.create({
+        user:
+          req.user._id,
 
-          title:
-            req.body.title,
+        title:
+          req.body.title,
 
-          subject:
-            req.body.subject,
+        subject:
+          req.body.subject,
 
-          fileUrl:
-            result.secure_url,
+        fileUrl:
+          result.secure_url,
 
-          fileType:
-            req.file.mimetype,
-        });
+        publicId:
+          result.public_id,
+
+        fileType:
+          req.file.mimetype,
+      });
 
       res.status(201).json({
         success: true,
@@ -83,15 +86,43 @@ const getMaterials =
 
 const deleteMaterial =
   async (req, res) => {
+
     try {
 
-      await Material.findOneAndDelete({
-        _id:
-          req.params.id,
+      const material =
+        await Material.findOne({
+          _id:
+            req.params.id,
 
-        user:
-          req.user._id,
-      });
+          user:
+            req.user._id,
+        });
+
+      if (!material) {
+
+        return res.status(404).json({
+          success: false,
+          message:
+            "Material not found",
+        });
+
+      }
+
+      if (
+        material.publicId
+      ) {
+
+        await cloudinary.uploader.destroy(
+          material.publicId,
+          {
+            resource_type:
+              "raw",
+          }
+        );
+
+      }
+
+      await material.deleteOne();
 
       res.status(200).json({
         success: true,
@@ -106,6 +137,7 @@ const deleteMaterial =
       });
 
     }
+
 };
 
 module.exports = {

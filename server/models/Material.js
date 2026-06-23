@@ -27,6 +27,11 @@ const materialSchema =
         default: "",
       },
 
+      publicId: {
+        type: String,
+        default: "",
+      },
+
       fileType: {
         type: String,
         default: "",

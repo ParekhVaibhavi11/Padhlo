@@ -28,6 +28,10 @@ const classroomNoteSchema =
         type: String,
       },
 
+      publicId: {
+        type: String,
+      },
+
       linkUrl: {
         type: String,
       },
