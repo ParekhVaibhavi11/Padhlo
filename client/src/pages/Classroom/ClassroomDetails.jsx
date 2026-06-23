@@ -296,9 +296,19 @@ const leaderboard =
       }
     };
 
+    const [
+      uploadingNote,
+      setUploadingNote
+    ] = useState(false);
+
 const handleUploadNote =
   async (e) => {
+
     e.preventDefault();
+
+    setUploadingNote(
+      true
+    );
 
     try {
 
@@ -316,9 +326,13 @@ const handleUploadNote =
       );
 
       const data =
-      await uploadNote(
-        id,
-        formData
+        await uploadNote(
+          id,
+          formData
+        );
+
+      setUploadingNote(
+        false
       );
 
       toast.success(
@@ -326,6 +340,7 @@ const handleUploadNote =
       );
 
       setNoteTitle("");
+
       setSelectedFile(
         null
       );
@@ -337,15 +352,19 @@ const handleUploadNote =
         ]
       );
 
-
     } catch (error) {
+
+      setUploadingNote(
+        false
+      );
 
       toast.error(
         "Upload failed"
       );
 
     }
-  };
+
+};
 
   const handleShareLink =
   async (e) => {
@@ -765,10 +784,19 @@ return (
     />
 
     <button
-      className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
-    >
-      Upload Note
-    </button>
+  disabled={
+    uploadingNote
+  }
+  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 disabled:opacity-60"
+>
+
+  {
+    uploadingNote
+      ? "Uploading..."
+      : "Upload Note"
+  }
+
+</button>
 
   </form>
 

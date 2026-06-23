@@ -19,6 +19,10 @@ const Materials = () => {
     setMaterials] =
     useState([]);
 
+  const [uploading,
+  setUploading] =
+  useState(false);
+
   const [title,
     setTitle] =
     useState("");
@@ -55,59 +59,72 @@ const Materials = () => {
     loadMaterials();
   }, []);
 
-  const handleUpload =
-    async (e) => {
+ const handleUpload =
+  async (e) => {
 
-      e.preventDefault();
+    e.preventDefault();
 
-      if (!file) {
-        return toast.error(
-          "Choose a file"
-        );
-      }
+    if (!file) {
+      return toast.error(
+        "Choose a file"
+      );
+    }
 
-      try {
+    try {
 
-        const formData =
-          new FormData();
+      setUploading(
+        true
+      );
 
-        formData.append(
-          "title",
-          title
-        );
+      const formData =
+        new FormData();
 
-        formData.append(
-          "subject",
-          subject
-        );
+      formData.append(
+        "title",
+        title
+      );
 
-        formData.append(
-          "file",
-          file
-        );
+      formData.append(
+        "subject",
+        subject
+      );
 
-        await uploadMaterial(
-          formData
-        );
+      formData.append(
+        "file",
+        file
+      );
 
-        toast.success(
-          "Material Uploaded"
-        );
+      await uploadMaterial(
+        formData
+      );
 
-        setTitle("");
-        setSubject("");
-        setFile(null);
+      setUploading(
+        false
+      );
 
-        loadMaterials();
+      toast.success(
+        "Material Uploaded"
+      );
 
-      } catch {
+      setTitle("");
+      setSubject("");
+      setFile(null);
 
-        toast.error(
-          "Upload Failed"
-        );
+      loadMaterials();
 
-      }
-    };
+    } catch {
+
+      setUploading(
+        false
+      );
+
+      toast.error(
+        "Upload Failed"
+      );
+
+    }
+
+};
 
   const handleDelete =
     async (id) => {
@@ -229,9 +246,16 @@ const Materials = () => {
             />
 
             <button
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg"
+              disabled={
+                uploading
+              }
+              className="bg-purple-600 text-white px-6 py-3 rounded-lg disabled:opacity-60"
             >
-              Upload Material
+
+              {uploading
+                ? "Uploading..."
+                : "Upload Material"}
+
             </button>
 
           </form>
