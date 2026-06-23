@@ -187,6 +187,13 @@ socket.on(
             message
           );
 
+        setMessages(
+          (prev) => [
+            ...prev,
+            data.message
+          ]
+        );
+
         socket.emit(
           "sendMessage",
           {

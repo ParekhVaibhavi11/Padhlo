@@ -20,12 +20,14 @@ const ClassroomNoteCard = ({
       {note.noteType ===
       "file" ? (
         <a
-          href={note.fileUrl}
+          href={`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(
+            note.fileUrl
+          )}`}
           target="_blank"
           rel="noreferrer"
           className="bg-purple-600 text-white px-4 py-2 rounded-lg"
         >
-          Download
+          Open PDF
         </a>
       ) : (
         <a

@@ -132,6 +132,47 @@ const Materials = () => {
       }
     };
 
+    const getViewerUrl =
+  (material) => {
+
+    const url =
+      encodeURIComponent(
+        material.fileUrl
+      );
+
+    if (
+      material.fileType.includes(
+        "pdf"
+      )
+    ) {
+
+      return material.fileUrl;
+
+    }
+
+    if (
+      material.fileType.includes(
+        "word"
+      ) ||
+      material.fileType.includes(
+        "document"
+      ) ||
+      material.fileType.includes(
+        "presentation"
+      ) ||
+      material.fileType.includes(
+        "powerpoint"
+      )
+    ) {
+
+      return `https://view.officeapps.live.com/op/view.aspx?src=${url}`;
+
+    }
+
+    return material.fileUrl;
+
+  };
+
   return (
     <DashboardLayout>
 
@@ -227,7 +268,9 @@ const Materials = () => {
 
                   <a
                     href={
-                      material.fileUrl
+                       getViewerUrl(
+                        material
+                       )
                     }
                     target="_blank"
                     rel="noreferrer"

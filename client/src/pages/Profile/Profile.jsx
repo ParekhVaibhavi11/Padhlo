@@ -162,10 +162,10 @@ const Profile = () => {
                 <img
                   src={user.avatar}
                   alt="avatar"
-                  className="w-64 h-64 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+                  className="w-52 h-52 rounded-full object-cover border-2 border-gray-200 shadow-sm"
                 />
               ) : (
-                <div className="w-64 h-64 rounded-full bg-purple-100 flex items-center justify-center text-6xl font-bold text-purple-700">
+                <div className="w-52 h-52 rounded-full bg-purple-100 flex items-center justify-center text-6xl font-bold text-purple-700">
 
                   {user.name?.charAt(0)}
 

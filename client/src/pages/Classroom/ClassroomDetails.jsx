@@ -282,6 +282,7 @@ const handleUploadNote =
         selectedFile
       );
 
+      const data =
       await uploadNote(
         id,
         formData
@@ -296,7 +297,13 @@ const handleUploadNote =
         null
       );
 
-      loadNotes();
+      setNotes(
+        (prev) => [
+          data.note,
+          ...prev,
+        ]
+      );
+
 
     } catch (error) {
 
