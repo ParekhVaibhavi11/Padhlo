@@ -8,6 +8,7 @@ const {
   uploadNote,
   shareLink,
   getNotes,
+  deleteNote,
 } = require(
   "../controllers/classroomNoteController"
 );
@@ -40,6 +41,12 @@ router.get(
   "/:id/notes",
   protect,
   getNotes
+);
+
+router.delete(
+  "/notes/:noteId",
+  protect,
+  deleteNote
 );
 
 module.exports =

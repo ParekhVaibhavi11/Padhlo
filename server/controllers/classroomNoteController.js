@@ -120,8 +120,49 @@ const cloudinary =
 }
   };
 
+  const deleteNote =
+  async (req, res) => {
+
+    try {
+
+      const note =
+        await ClassroomNote.findById(
+          req.params.noteId
+        );
+
+      if (!note) {
+
+        return res.status(404).json({
+          success: false,
+          message:
+            "Note not found",
+        });
+
+      }
+
+      await note.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Note deleted",
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+
+    }
+
+};
+
   module.exports = {
   uploadNote,
   shareLink,
   getNotes,
+  deleteNote,
 };

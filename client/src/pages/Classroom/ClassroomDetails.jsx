@@ -25,6 +25,7 @@ import {
   getNotes,
   uploadNote,
   shareNoteLink,
+  deleteNote,
 } from "../../services/classroomNoteService";
 
 const ClassroomDetails = () => {
@@ -100,6 +101,38 @@ const ClassroomDetails = () => {
 
       }
     };
+
+    const handleDeleteNote =
+  async (noteId) => {
+
+    try {
+
+      await deleteNote(
+        noteId
+      );
+
+      setNotes(
+        (prev) =>
+          prev.filter(
+            (note) =>
+              note._id !==
+              noteId
+          )
+      );
+
+      toast.success(
+        "Note deleted"
+      );
+
+    } catch (error) {
+
+      toast.error(
+        "Failed to delete note"
+      );
+
+    }
+
+};
 
   useEffect(() => {
     const loadClassroom =
@@ -797,6 +830,9 @@ return (
         <ClassroomNoteCard
           key={note._id}
           note={note}
+          onDelete={
+            handleDeleteNote
+          }
         />
       ))
     )}

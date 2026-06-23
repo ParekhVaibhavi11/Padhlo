@@ -63,3 +63,21 @@ export const shareNoteLink =
 
     return response.data;
   };
+
+  export const deleteNote =
+  async (noteId) => {
+
+    const response =
+      await axios.delete(
+        `${API_URL}/notes/${noteId}`,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${getToken()}`
+          }
+        }
+      );
+
+    return response.data;
+
+};
