@@ -82,6 +82,11 @@ const ClassroomDetails = () => {
           setLinkUrl] =
           useState("");
 
+        const [
+          uploadingNote,
+          setUploadingNote
+        ] = useState(false);
+
         const loadNotes =
         async () => {
           try {
@@ -295,11 +300,6 @@ const leaderboard =
         );
       }
     };
-
-    const [
-      uploadingNote,
-      setUploadingNote
-    ] = useState(false);
 
 const handleUploadNote =
   async (e) => {
