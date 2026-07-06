@@ -2,6 +2,7 @@ import { useEffect, useState, } from "react";
 import { useParams, } from "react-router-dom";
 import { useNavigate, } from "react-router-dom";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
 import toast from "react-hot-toast";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import useAuthStore from "../../store/authStore";
@@ -45,6 +46,10 @@ const ClassroomDetails = () => {
       title: "",
       description: "",
     });
+
+  const [showMembers, setShowMembers] = useState(false);
+  
+  const [showNotes, setShowNotes] = useState(false);
 
   const user = useAuthStore(
     (state) => state.user
@@ -468,294 +473,357 @@ const handleLeaveClassroom =
 
 return (
     <DashboardLayout>
-      <div className="space-y-6">
 
-       {/* Classroom Info */}
+  <div className="space-y-6">
 
-      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+    {/* ================= Header ================= */}
 
-        <div className="flex justify-between items-start">
+    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-7">
 
-            <div>
+  <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
 
-              <h1 className="text-3xl font-bold">
-                {classroom.name}
-              </h1>
+    <div className="flex-1">
 
-              <p className="text-gray-500 mt-2">
-                {classroom.description}
-              </p>
+      <h1 className="text-3xl font-bold text-slate-900">
+        {classroom.name}
+      </h1>
 
-              <div className="mt-4">
-                <p className="text-sm text-gray-500">
-                  Room Code
-                </p>
-
-                <p className="font-semibold text-purple-700 tracking-wider">
-                  {classroom.roomCode}
-                </p>
-              </div>
-
-            </div>
-
-            {isCreator ? (
-
-              <button
-                onClick={handleDeleteClassroom}
-                className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
-              >
-                Delete Classroom
-              </button>
-
-            ) : (
-
-              <button
-                onClick={handleLeaveClassroom}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition"
-              >
-                Leave Classroom
-              </button>
-
-            )}
-
-          </div>
-
-</div>
-
-        {/* Members */}
-
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-
-          <h2 className="text-xl font-semibold mb-4">
-            Members
-          </h2>
-
-          <div className="space-y-3">
-
-            {classroom.members.map(
-              (member) => (
-                <div
-                  key={member._id}
-                  className="border rounded-lg p-3"
-                >
-                  <p className="font-medium">
-                    {member.name}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    {member.email}
-                  </p>
-                </div>
-              )
-            )}
-
-          </div>
-
-        </div>
-
-        {/* Classroom Tasks */}
-
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-
-          <h2 className="text-xl font-semibold mb-4">
-            Classroom Tasks
-          </h2>
-
-          {isCreator && (
-            <form
-              onSubmit={
-                handleCreateTask
-              }
-              className="space-y-3 mb-6"
-            >
-
-              <input
-                type="text"
-                placeholder="Task Title"
-                value={
-                  newTask.title
-                }
-                onChange={(e) =>
-                  setNewTask({
-                    ...newTask,
-                    title:
-                      e.target.value,
-                  })
-                }
-                className="w-full border p-3 rounded-lg"
-                required
-              />
-
-              <textarea
-                placeholder="Description"
-                value={
-                  newTask.description
-                }
-                onChange={(e) =>
-                  setNewTask({
-                    ...newTask,
-                    description:
-                      e.target.value,
-                  })
-                }
-                className="w-full border p-3 rounded-lg"
-              />
-
-              <button
-                className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
-              >
-                Add Classroom Task
-              </button>
-
-            </form>
-          )}
-
-          <div className="space-y-3">
-
-            {tasks.length === 0 ? (
-              <p className="text-gray-500">
-                No classroom tasks yet.
-              </p>
-            ) : (
-              tasks.map((task) => (
-                <ClassroomTaskCard
-                  key={task._id}
-                  task={task}
-                  onComplete={
-                    handleCompleteTask
-                  }
-                  isCompleted={
-                    task.completedBy?.some(
-                      (member) =>
-                        member.toString() ===
-                        currentUserId?.toString()
-                    )
-                  }
-                />
-              ))
-            )}
-
-          </div>
-
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-
-  <h2 className="text-xl font-semibold mb-4">
-    Progress Tracking
-  </h2>
-
-  <div className="space-y-3">
-
-    {classroom.members.map(
-      (member) => {
-        const memberProgress =
-          progressData[
-            member._id
-          ];
-
-        return (
-          <div
-            key={
-              member._id
-            }
-            className="border rounded-lg p-3"
-          >
-            <div className="flex justify-between">
-
-              <span>
-                {member.name}
-              </span>
-
-              <span className="font-medium text-purple-700">
-
-                {
-                  memberProgress
-                    ?.completed ||
-                    0
-                }
-                /
-                {
-                  tasks.length
-                }
-
-              </span>
-
-            </div>
-
-          </div>
-        );
-      }
-    )}
-
-  </div>
-
-</div>
-
-<div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-
-  <h2 className="text-xl font-semibold mb-4">
-    🏆 Leaderboard
-  </h2>
-
-  <div className="space-y-3">
-
-    {leaderboard.length ===
-    0 ? (
-      <p className="text-gray-500">
-        No progress yet.
+      <p className="mt-3 text-slate-500 leading-relaxed">
+        {classroom.description}
       </p>
-    ) : (
-      leaderboard.map(
-        (
-          member,
-          index
-        ) => (
-          <div
-            key={
-              member.name
-            }
-            className="flex justify-between border rounded-lg p-3"
-          >
-            <span>
 
-              {index + 1}.
-              {" "}
-              {member.name}
+      <div className="flex flex-wrap gap-3 mt-6">
 
-            </span>
+        <div className="bg-violet-50 text-violet-700 px-4 py-2 rounded-xl font-medium">
+          🔑 {classroom.roomCode}
+        </div>
 
-            <span className="font-semibold text-purple-700">
-              {
-                member.completed
-              }
-              {" "}
-              Tasks
-            </span>
+        <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-xl font-medium">
+          👥 {classroom.members.length} Members
+        </div>
 
-          </div>
-        )
-      )
-    )}
+        <div className="bg-green-50 text-green-700 px-4 py-2 rounded-xl font-medium">
+          ✅ {tasks.length} Tasks
+        </div>
+
+        <div className="bg-orange-50 text-orange-700 px-4 py-2 rounded-xl font-medium">
+          📚 {notes.length} Resources
+        </div>
+
+      </div>
+
+    </div>
+
+    <div className="flex gap-3">
+
+      {isCreator ? (
+
+        <button
+          onClick={handleDeleteClassroom}
+          className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition-all duration-300"
+        >
+          Delete Classroom
+        </button>
+
+      ) : (
+
+        <button
+          onClick={handleLeaveClassroom}
+          className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-xl transition-all duration-300"
+        >
+          Leave Classroom
+        </button>
+
+      )}
+
+    </div>
 
   </div>
 
 </div>
 
-<div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+    {/* ============ Tasks + Chat ============ */}
 
-  <h2 className="text-xl font-semibold mb-6">
-    Notes & Resources
-  </h2>
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
 
-  {/* Upload File */}
+      <div className="xl:col-span-8">
+
+  <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+
+    <div className="flex items-center justify-between mb-6">
+
+      <div>
+
+        <h2 className="text-2xl font-bold text-slate-900">
+          Classroom Tasks
+        </h2>
+
+        <p className="text-sm text-slate-500 mt-1">
+          Manage assignments and track completion.
+        </p>
+
+      </div>
+
+      <div className="bg-violet-100 text-violet-700 px-4 py-2 rounded-xl font-semibold">
+
+        {tasks.length} Tasks
+
+      </div>
+
+    </div>
+
+    {isCreator && (
+
+      <form
+        onSubmit={handleCreateTask}
+        className="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-6 space-y-4"
+      >
+
+        <input
+          type="text"
+          placeholder="Task Title"
+          value={newTask.title}
+          onChange={(e) =>
+            setNewTask({
+              ...newTask,
+              title: e.target.value,
+            })
+          }
+          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-violet-400"
+          required
+        />
+
+        <textarea
+          placeholder="Task Description"
+          value={newTask.description}
+          onChange={(e) =>
+            setNewTask({
+              ...newTask,
+              description: e.target.value,
+            })
+          }
+          rows={4}
+          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none resize-none focus:ring-2 focus:ring-violet-400"
+        />
+
+        <button
+          className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl transition-all duration-300"
+        >
+          Add Classroom Task
+        </button>
+
+      </form>
+
+    )}
+
+    <div className="space-y-4">
+
+      {tasks.length === 0 ? (
+
+        <div className="text-center py-16 border-2 border-dashed border-slate-200 rounded-2xl">
+
+          <div className="text-5xl mb-4">
+            📋
+          </div>
+
+          <h3 className="text-xl font-semibold text-slate-800">
+            No Tasks Yet
+          </h3>
+
+          <p className="text-slate-500 mt-2">
+            Create your first classroom task.
+          </p>
+
+        </div>
+
+      ) : (
+
+        tasks.map((task) => (
+
+          <ClassroomTaskCard
+            key={task._id}
+            task={task}
+            onComplete={handleCompleteTask}
+            isCompleted={
+              task.completedBy?.some(
+                (member) =>
+                  member.toString() ===
+                  currentUserId?.toString()
+              )
+            }
+          />
+
+        ))
+
+      )}
+
+    </div>
+
+  </div>
+
+</div>
+
+      <div className="xl:col-span-4">
+
+ <div className="sticky top-6">
+
+  <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden h-[760px] flex flex-col">
+
+    {/* Header */}
+
+    <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 bg-slate-50">
+
+      <div>
+
+        <h2 className="text-xl font-bold text-slate-900">
+          Classroom Chat
+        </h2>
+
+        <p className="text-sm text-slate-500 mt-1">
+          Discuss tasks and collaborate with your classmates.
+        </p>
+
+      </div>
+
+      <div className="flex items-center gap-2">
+
+        <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+
+        <span className="text-sm text-slate-600">
+          Live
+        </span>
+
+      </div>
+
+    </div>
+
+    {/* Chat */}
+
+    <div className="flex-1 bg-slate-50 overflow-hidden">
+
+      <ClassroomChat
+        classroomId={id}
+      />
+
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+    </div>
+
+    {/* ============ Members + Notes ============ */}
+
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+
+    <button
+  onClick={() => setShowMembers(!showMembers)}
+  className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition"
+>
+  <div>
+    <h2 className="text-2xl font-bold text-slate-900">
+      Members
+    </h2>
+
+    <p className="text-sm text-slate-500 mt-1">
+      {classroom.members.length} members in this classroom
+    </p>
+  </div>
+
+  <div className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-violet-100 transition">
+    {showMembers ? (
+      <ChevronUp size={22} />
+    ) : (
+      <ChevronDown size={22} />
+    )}
+  </div>
+</button>
+
+    {showMembers && (
+
+        <div className="border-t border-slate-100 p-6">
+
+            <div className="space-y-3">
+
+                {classroom.members.map((member) => (
+
+                    <div
+                        key={member._id}
+                        className="flex items-center justify-between rounded-xl border border-slate-200 p-4 hover:bg-slate-50 transition"
+                    >
+
+                        <div>
+
+                            <p className="font-semibold text-slate-800">
+                                {member.name}
+                            </p>
+
+                            <p className="text-sm text-slate-500">
+                                {member.email}
+                            </p>
+
+                        </div>
+
+                        <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center font-bold text-violet-700">
+
+                            {member.name?.charAt(0)}
+
+                        </div>
+
+                    </div>
+
+                ))}
+
+            </div>
+
+        </div>
+
+    )}
+
+</div>
+
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+
+   <button
+  onClick={() => setShowNotes(!showNotes)}
+  className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition"
+>
+  <div>
+    <h2 className="text-2xl font-bold text-slate-900">
+      Notes & Resources
+    </h2>
+
+    <p className="text-sm text-slate-500 mt-1">
+      {notes.length} shared resources
+    </p>
+  </div>
+
+  <div className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-violet-100 transition">
+    {showNotes ? (
+      <ChevronUp size={22} />
+    ) : (
+      <ChevronDown size={22} />
+    )}
+  </div>
+</button>
+
+    {showNotes && (
+
+<div className="border-t border-slate-100 p-6 space-y-8">
+
+  {/* Upload Note */}
 
   <form
     onSubmit={handleUploadNote}
-    className="space-y-3 mb-8"
+    className="space-y-4"
   >
 
-    <h3 className="font-medium">
+    <h3 className="text-lg font-semibold text-slate-800">
       Upload Note
     </h3>
 
@@ -764,50 +832,42 @@ return (
       placeholder="Note Title"
       value={noteTitle}
       onChange={(e) =>
-        setNoteTitle(
-          e.target.value
-        )
+        setNoteTitle(e.target.value)
       }
-      className="w-full border p-3 rounded-lg"
+      className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-violet-400 outline-none"
       required
     />
 
     <input
       type="file"
       onChange={(e) =>
-        setSelectedFile(
-          e.target.files[0]
-        )
+        setSelectedFile(e.target.files[0])
       }
-      className="w-full border p-3 rounded-lg"
+      className="w-full rounded-xl border border-slate-300 px-4 py-3"
       required
     />
 
     <button
-  disabled={
-    uploadingNote
-  }
-  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 disabled:opacity-60"
->
-
-  {
-    uploadingNote
-      ? "Uploading..."
-      : "Upload Note"
-  }
-
-</button>
+      disabled={uploadingNote}
+      className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl transition disabled:opacity-60"
+    >
+      {uploadingNote
+        ? "Uploading..."
+        : "Upload Note"}
+    </button>
 
   </form>
+
+  <hr className="border-slate-200" />
 
   {/* Share Link */}
 
   <form
     onSubmit={handleShareLink}
-    className="space-y-3 mb-8"
+    className="space-y-4"
   >
 
-    <h3 className="font-medium">
+    <h3 className="text-lg font-semibold text-slate-800">
       Share Resource Link
     </h3>
 
@@ -816,11 +876,9 @@ return (
       placeholder="Link Title"
       value={linkTitle}
       onChange={(e) =>
-        setLinkTitle(
-          e.target.value
-        )
+        setLinkTitle(e.target.value)
       }
-      className="w-full border p-3 rounded-lg"
+      className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-violet-400 outline-none"
       required
     />
 
@@ -829,51 +887,235 @@ return (
       placeholder="https://..."
       value={linkUrl}
       onChange={(e) =>
-        setLinkUrl(
-          e.target.value
-        )
+        setLinkUrl(e.target.value)
       }
-      className="w-full border p-3 rounded-lg"
+      className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-violet-400 outline-none"
       required
     />
 
     <button
-      className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
+      className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl transition"
     >
       Share Link
     </button>
 
   </form>
 
-  {/* Notes List */}
+  <hr className="border-slate-200" />
 
-  <div className="space-y-3">
+  {/* Shared Notes */}
 
-    {notes.length === 0 ? (
-      <p className="text-gray-500">
-        No notes shared yet.
-      </p>
-    ) : (
-      notes.map((note) => (
-        <ClassroomNoteCard
-          key={note._id}
-          note={note}
-          onDelete={
-            handleDeleteNote
-          }
-        />
-      ))
-    )}
+  <div>
+
+    <h3 className="text-lg font-semibold text-slate-800 mb-4">
+      Shared Resources
+    </h3>
+
+    <div className="space-y-4">
+
+      {notes.length === 0 ? (
+
+        <div className="text-center py-8 text-slate-500 border border-dashed rounded-xl">
+          No notes shared yet.
+        </div>
+
+      ) : (
+
+        notes.map((note) => (
+
+          <ClassroomNoteCard
+            key={note._id}
+            note={note}
+            onDelete={handleDeleteNote}
+          />
+
+        ))
+
+      )}
+
+    </div>
 
   </div>
 
 </div>
-<ClassroomChat
-  classroomId={id}
-/>
 
-      </div>
-    </DashboardLayout>
+)}
+</div>
+
+    </div>
+
+    {/* ============ Progress + Leaderboard ============ */}
+
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+
+    <div className="flex items-center justify-between mb-6">
+
+        <div>
+
+            <h2 className="text-xl font-bold text-slate-900">
+                Progress Tracking
+            </h2>
+
+            <p className="text-sm text-slate-500 mt-1">
+                Classroom completion status
+            </p>
+
+        </div>
+
+    </div>
+
+    <div className="space-y-5">
+
+        {classroom.members.map((member) => {
+
+            const memberProgress =
+                progressData[member._id];
+
+            const completed =
+                memberProgress?.completed || 0;
+
+            const percentage =
+                tasks.length === 0
+                    ? 0
+                    : Math.round(
+                          (completed / tasks.length) * 100
+                      );
+
+            return (
+
+                <div
+                    key={member._id}
+                    className="space-y-2"
+                >
+
+                    <div className="flex justify-between">
+
+                        <span className="font-medium text-slate-700">
+                            {member.name}
+                        </span>
+
+                        <span className="text-violet-600 font-semibold">
+
+                            {completed}/{tasks.length}
+
+                        </span>
+
+                    </div>
+
+                    <div className="w-full h-2 rounded-full bg-slate-200">
+
+                        <div
+
+                            style={{
+                                width: `${percentage}%`,
+                            }}
+
+                            className="h-2 rounded-full bg-violet-600"
+
+                        />
+
+                    </div>
+
+                </div>
+
+            );
+
+        })}
+
+    </div>
+
+</div>
+      
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+
+    <div className="mb-6">
+
+        <h2 className="text-xl font-bold text-slate-900">
+            Leaderboard
+        </h2>
+
+        <p className="text-sm text-slate-500 mt-1">
+            Top performers in this classroom
+        </p>
+
+    </div>
+
+    <div className="space-y-4">
+
+        {leaderboard.length === 0 ? (
+
+            <div className="text-center py-12 text-slate-500">
+
+                No progress yet.
+
+            </div>
+
+        ) : (
+
+            leaderboard.map((member, index) => (
+
+                <div
+                    key={member.name}
+                    className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 hover:bg-slate-50 transition"
+                >
+
+                    <div className="flex items-center gap-4">
+
+                        <div
+                            className={`h-12 w-12 rounded-full flex items-center justify-center text-white font-bold
+
+                            ${
+                                index === 0
+                                    ? "bg-yellow-500"
+                                    : index === 1
+                                    ? "bg-slate-400"
+                                    : index === 2
+                                    ? "bg-orange-500"
+                                    : "bg-violet-600"
+                            }`}
+                        >
+
+                            {index + 1}
+
+                        </div>
+
+                        <div>
+
+                            <p className="font-semibold text-slate-800">
+                                {member.name}
+                            </p>
+
+                            <p className="text-sm text-slate-500">
+                                {member.completed} Tasks Completed
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div className="font-bold text-violet-700">
+
+                        {member.completed}
+
+                    </div>
+
+                </div>
+
+            ))
+
+        )}
+
+    </div>
+
+</div>
+
+    </div>
+
+  </div>
+
+</DashboardLayout>
   );
 };
 

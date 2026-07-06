@@ -90,51 +90,74 @@ const Classroom = () => {
       }
     };
 
-  return (
-    <DashboardLayout>
+ return (
+  <DashboardLayout>
+    <div className="space-y-8">
 
-      <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900">
+          Classrooms
+        </h1>
 
+        <p className="mt-2 text-slate-500">
+          Create a classroom, join using a code, and collaborate with your classmates.
+        </p>
+      </div>
+
+      {/* Form Section */}
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
         <ClassroomForm
-          onCreate={
-            handleCreate
-          }
-          onJoin={
-            handleJoin
-          }
+          onCreate={handleCreate}
+          onJoin={handleJoin}
         />
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+      {/* Classroom List */}
+      <div className="space-y-5">
 
-          {classrooms.length === 0 ? (
-            <div className="bg-white p-6 rounded-2xl border border-gray-100">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-slate-900">
+            Your Classrooms
+          </h2>
 
-              <p className="text-gray-500">
-                No classrooms joined yet.
-              </p>
-
-            </div>
-          ) : (
-            classrooms.map(
-              (classroom) => (
-                <ClassroomCard
-                  key={
-                    classroom._id
-                  }
-                  classroom={
-                    classroom
-                  }
-                />
-              )
-            )
-          )}
-
+          <span className="rounded-full bg-violet-100 px-4 py-1 text-sm font-medium text-violet-700">
+            {classrooms.length} Classroom{classrooms.length !== 1 ? "s" : ""}
+          </span>
         </div>
+
+        {classrooms.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center shadow-sm">
+
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-violet-100 text-4xl">
+              📚
+            </div>
+
+            <h3 className="text-xl font-semibold text-slate-800">
+              No Classrooms Yet
+            </h3>
+
+            <p className="mt-2 text-slate-500">
+              Create a new classroom or join one using a classroom code.
+            </p>
+
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {classrooms.map((classroom) => (
+              <ClassroomCard
+                key={classroom._id}
+                classroom={classroom}
+              />
+            ))}
+          </div>
+        )}
 
       </div>
 
-    </DashboardLayout>
-  );
+    </div>
+  </DashboardLayout>
+); 
 };
 
 export default Classroom;

@@ -17,6 +17,8 @@ import {
 import useAuthStore
 from "../../store/authStore";
 
+import { Send } from "lucide-react";
+
 import {
   HiOutlineDotsVertical
 }
@@ -307,32 +309,43 @@ const handleEdit =
 
 return (
 
-    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+    <div className="flex flex-col h-full">
 
-      <h2 className="text-xl font-semibold mb-4">
-        Classroom Chat
-      </h2>
-
-      <div className="h-96 overflow-y-auto border rounded-lg p-4 bg-gray-50">
-
-        {messages.length ===
+    <div className="flex-1 overflow-y-auto bg-slate-50 px-4 py-4">
+      {messages.length ===
         0 ? (
 
-          <p className="text-gray-500">
-            No messages yet.
-          </p>
+        <div className="flex flex-col justify-center items-center h-full text-slate-400">
+
+<div className="text-6xl">
+
+💬
+
+</div>
+
+<p className="mt-4 font-semibold">
+
+No messages yet
+
+</p>
+
+<p className="text-sm">
+
+Start the conversation.
+
+</p>
+
+</div>
 
         ) : (
-
-          messages.map(
-            (
-              msg,
-              index
-            ) => (
+          
+        <div className="space-y-4">
+  
+          {messages.map(( msg,index) => (
 
               <div
                 key={msg._id}
-                className={`mb-3 flex ${
+                className={`flex px-2 ${
                   msg.senderName ===
                   user?.name
                     ? "justify-end"
@@ -340,20 +353,29 @@ return (
                 }`}
               >
 
-                <div className={`max-w-xs px-4 py-2 rounded-xl ${
-                  msg.senderName ===
-                  user?.name
-                    ? "bg-purple-600 text-white"
-                    : "bg-white border"
-                }`}>
+                <div
+                  className={`relative max-w-[72%] rounded-2xl px-4 py-3 shadow-sm transition-all
 
-                  <p className="text-xs font-semibold mb-1">
+                  ${
+                    msg.senderName === user?.name
+                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-br-md"
+                      : "bg-white border border-slate-200 text-slate-800 rounded-bl-md"
+                  }`}
+                >
+
+                  <p
+                    className={`text-xs font-bold mb-2 ${
+                      msg.senderName === user?.name
+                        ? "text-violet-100"
+                        : "text-violet-700"
+                    }`}
+                  >
                     {msg.senderName}
                   </p>
 
                   <div className="flex items-start justify-between gap-3">
 
-  <p className="break-words">
+  <p className="break-words leading-relaxed">
     {msg.message}
   </p>
 
@@ -371,25 +393,34 @@ return (
               : msg._id
           )
         }
-        className="text-gray-400 hover:text-gray-700 text-lg font-bold"
+        className={`transition
+
+          ${
+          msg.senderName===user?.name
+
+          ? "text-violet-100 hover:text-white"
+
+          : "text-slate-400 hover:text-slate-700"
+
+          }`}
       >
         <HiOutlineDotsVertical
-         size={18}
+          size={18}
           />
       </button>
 
       {openMenu ===
         msg._id && (
 
-        <div className="absolute right-0 top-7 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[160px]">
+        <div className="absolute right-0 top-10 bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden z-50 w-44">
 
               <button
                 onClick={() => {
                   handleEdit(msg);
                   setOpenMenu(null);
                 }}
-                 className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm text-gray-800"
-                 >
+                className="w-full text-left px-4 py-3 hover:bg-slate-50 text-sm text-gray-800"
+                >
                 Edit Message
               </button>
 
@@ -400,7 +431,7 @@ return (
                   );
                   setOpenMenu(null);
                 }}
-                 className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm text-gray-800"
+                className="w-full text-left px-4 py-3 hover:bg-red-50 text-red-600 text-sm"
               >
                 Delete Message
               </button>
@@ -419,16 +450,13 @@ return (
 
               </div>
 
-            )
-          )
-
-        )}
-
-        <div
-          ref={
-            messagesEndRef
+            ))
           }
-        />
+
+          <div ref={messagesEndRef} />
+      </div> 
+        )}
+      
 
       </div>
 
@@ -436,7 +464,7 @@ return (
         onSubmit={
           handleSend
         }
-        className="flex gap-3 mt-4"
+        className="flex items-center gap-3 border-t border-slate-200 bg-white px-4 py-4 shrink-0"
       >
 
         <input
@@ -448,14 +476,36 @@ return (
               e.target.value
             )
           }
-          className="flex-1 border rounded-lg p-3"
+          className="flex-1 rounded-full border border-slate-300 px-5 py-3 outline-none focus:ring-2 focus:ring-violet-500"
         />
 
-        <button
-          className="bg-purple-600 text-white px-6 rounded-lg hover:bg-purple-700"
-        >
-          Send
-        </button>
+       <button
+  type="submit"
+  className="
+    px-6
+    h-12
+    rounded-full
+    bg-gradient-to-r
+    from-violet-600
+    to-purple-600
+    text-white
+    font-semibold
+    shadow-lg
+    shadow-violet-300/40
+    hover:from-violet-700
+    hover:to-purple-700
+    hover:shadow-xl
+    hover:-translate-y-0.5
+    transition-all
+    duration-300
+    flex
+    items-center
+    gap-2
+  "
+>
+  <Send size={18} />
+  Send
+</button>
 
       </form>
 
