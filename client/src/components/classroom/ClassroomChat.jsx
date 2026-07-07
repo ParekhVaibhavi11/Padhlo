@@ -461,35 +461,55 @@ Start the conversation.
       </div>
 
       <form
-        onSubmit={
-          handleSend
-        }
-        className="flex items-center gap-3 border-t border-slate-200 bg-white px-4 py-4 shrink-0"
-      >
+  onSubmit={handleSend}
+  className="
+    flex
+    flex-col
+    sm:flex-row
+    items-stretch
+    sm:items-center
+    gap-3
+    border-t
+    border-slate-200
+    bg-white
+    px-4
+    py-4
+    shrink-0
+  "
+>
 
-        <input
-          type="text"
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) =>
-            setMessage(
-              e.target.value
-            )
-          }
-          className="flex-1 rounded-full border border-slate-300 px-5 py-3 outline-none focus:ring-2 focus:ring-violet-500"
-        />
+      <input
+  type="text"
+  placeholder="Type a message..."
+  value={message}
+  onChange={(e) => setMessage(e.target.value)}
+  className="
+    flex-1
+    min-w-0
+    rounded-full
+    border
+    border-slate-300
+    px-5
+    py-3
+    outline-none
+    focus:ring-2
+    focus:ring-violet-500
+  "
+/>
 
-       <button
+      <button
   type="submit"
   className="
-    px-6
     h-12
+    w-12
     rounded-full
     bg-gradient-to-r
     from-violet-600
     to-purple-600
     text-white
-    font-semibold
+    flex
+    items-center
+    justify-center
     shadow-lg
     shadow-violet-300/40
     hover:from-violet-700
@@ -498,13 +518,10 @@ Start the conversation.
     hover:-translate-y-0.5
     transition-all
     duration-300
-    flex
-    items-center
-    gap-2
+    active:scale-95
   "
 >
-  <Send size={18} />
-  Send
+  <Send size={20} />
 </button>
 
       </form>

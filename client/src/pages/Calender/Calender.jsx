@@ -9,7 +9,8 @@ import moment from "moment";
 
 import {
   CalendarDays,
-  Plus,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -31,7 +32,12 @@ import {
 const localizer =
   momentLocalizer(moment);
 
+
 const CalendarPage = () => {
+
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+const [currentView, setCurrentView] = useState("month");
 
   const [calendarEvents,
     setCalendarEvents] =
@@ -236,56 +242,142 @@ const CalendarPage = () => {
     </div>
 
     {/* Calendar */}
-    <div className="p-6 bg-slate-50">
-      <Calendar
-        localizer={localizer}
-        events={calendarEvents}
-        startAccessor="start"
-        endAccessor="end"
-        popup
-        selectable
-        views={["month", "week", "day", "agenda"]}
-        defaultView="month"
+    <div className="bg-slate-50">
 
-        eventPropGetter={(event) => {
-          let style = {
-            border: "none",
-            borderRadius: "10px",
-            color: "#fff",
-            fontSize: "13px",
-            fontWeight: "600",
-            padding: "3px 8px",
-          };
+  {/* Custom Toolbar */}
 
-          if (event.type === "event") {
-            style = {
-              ...style,
-              backgroundColor: "#7C3AED",
-            };
-          }
+  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 px-6 py-5 border-b border-slate-200 bg-white">
 
-          if (event.type === "task") {
-            style = {
-              ...style,
-              backgroundColor: "#EF4444",
-            };
-          }
+    {/* Left */}
 
-          if (event.type === "completedTask") {
-            style = {
-              ...style,
-              backgroundColor: "#22C55E",
-            };
-          }
+    <div className="flex items-center gap-3">
 
-          return { style };
-        }}
+      <button
+        onClick={() =>
+          setCurrentDate(
+            moment(currentDate)
+              .subtract(1, currentView)
+              .toDate()
+          )
+        }
+        className="h-11 w-11 rounded-xl border border-slate-200 hover:bg-violet-50 transition flex items-center justify-center"
+      >
+        <ChevronLeft size={20} />
+      </button>
 
-        style={{
-          height: "720px",
-        }}
-      />
+      <h2 className="text-2xl font-bold text-slate-900 min-w-[180px] text-center">
+        {moment(currentDate).format("MMMM YYYY")}
+      </h2>
+
+      <button
+        onClick={() =>
+          setCurrentDate(
+            moment(currentDate)
+              .add(1, currentView)
+              .toDate()
+          )
+        }
+        className="h-11 w-11 rounded-xl border border-slate-200 hover:bg-violet-50 transition flex items-center justify-center"
+      >
+        <ChevronRight size={20} />
+      </button>
+
+      <button
+        onClick={() => setCurrentDate(new Date())}
+        className="ml-2 rounded-xl bg-violet-600 text-white px-5 py-2 font-medium hover:bg-violet-700 transition"
+      >
+        Today
+      </button>
+
     </div>
+
+    {/* Right */}
+
+    <div className="flex rounded-2xl bg-slate-100 p-1">
+
+      {["month", "week", "day", "agenda"].map((view) => (
+
+        <button
+          key={view}
+          onClick={() => setCurrentView(view)}
+          className={`px-5 py-2 rounded-xl capitalize font-medium transition
+
+            ${
+              currentView === view
+                ? "bg-violet-600 text-white shadow"
+                : "text-slate-600 hover:bg-white"
+            }
+          `}
+        >
+          {view}
+        </button>
+
+      ))}
+
+    </div>
+
+  </div>
+
+  <div className="p-6">
+
+    <Calendar
+      localizer={localizer}
+      events={calendarEvents}
+
+      toolbar={false}
+
+      date={currentDate}
+
+      view={currentView}
+
+      onView={(view) => setCurrentView(view)}
+
+      onNavigate={(date) => setCurrentDate(date)}
+
+      startAccessor="start"
+      endAccessor="end"
+
+      popup
+
+      selectable
+
+      views={["month", "week", "day", "agenda"]}
+
+      eventPropGetter={(event) => {
+
+        let style = {
+          border: "none",
+          borderRadius: "10px",
+          color: "#fff",
+          fontSize: "13px",
+          fontWeight: "600",
+          padding: "3px 8px",
+        };
+
+        if (event.type === "event") {
+          style.backgroundColor = "#7C3AED";
+        }
+
+        if (event.type === "task") {
+          style.backgroundColor = "#EF4444";
+        }
+
+        if (event.type === "completedTask") {
+          style.backgroundColor = "#22C55E";
+        }
+
+        return { style };
+
+      }}
+
+      style={{
+        height: "720px",
+      }}
+    />
+
+  </div>
+
+</div>
   </div>
 </div>
 
