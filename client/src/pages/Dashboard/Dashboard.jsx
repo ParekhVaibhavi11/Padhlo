@@ -2,7 +2,12 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import useAuthStore from "../../store/authStore";
 
 import StatCard from "../../components/dashboard/StatCard";
-
+import {
+  CheckCircle2,
+  Clock3,
+  ListTodo,
+  Flame,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { getDashboardStats }
@@ -63,24 +68,32 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
           <StatCard
-            title="Tasks"
-            value={stats.totalTasks}
-          />
+  title="Tasks"
+  value={stats.totalTasks}
+  icon={<ListTodo size={30} />}
+  color="violet"
+/>
 
-          <StatCard
-            title="Completed"
-            value={stats.completedTasks}
-            />
+<StatCard
+  title="Completed"
+  value={stats.completedTasks}
+  icon={<CheckCircle2 size={30} />}
+  color="green"
+/>
 
-          <StatCard
-            title="Pending"
-            value={stats.pendingTasks}
-            />
+<StatCard
+  title="Pending"
+  value={stats.pendingTasks}
+  icon={<Clock3 size={30} />}
+  color="orange"
+/>
 
-          <StatCard
-            title="Streak"
-            value={user?.streak ? `${user.streak} Days` : "0 Days"}
-          />
+<StatCard
+  title="Streak"
+  value={user?.streak ? `${user.streak} Days` : "0 Days"}
+  icon={<Flame size={30} />}
+  color="blue"
+/>
 
         </div>
 

@@ -789,7 +789,7 @@ return (
 
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
-   <button
+  <button
   onClick={() => setShowNotes(!showNotes)}
   className="w-full flex items-center justify-between px-6 py-5 hover:bg-slate-50 transition"
 >

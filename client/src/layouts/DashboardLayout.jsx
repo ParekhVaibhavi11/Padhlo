@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 const DashboardLayout = ({ children }) => {
+
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => {
@@ -11,22 +12,41 @@ const DashboardLayout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex">
+
+    <div className="flex min-h-screen bg-slate-100">
+
+      {/* Sidebar */}
 
       <Sidebar isOpen={isOpen} />
 
-      <div className="flex flex-1 flex-col">
+      {/* Main Area */}
 
-        <Navbar toggleSidebar={toggleSidebar} />
+      <div className="flex flex-1 flex-col min-w-0">
 
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
-          {children}
+        {/* Navbar */}
+
+        <Navbar
+          toggleSidebar={toggleSidebar}
+        />
+
+        {/* Content */}
+
+        <main className="flex-1 overflow-y-auto">
+
+          <div className="mx-auto max-w-[1700px] px-6 py-6 lg:px-8 lg:py-8">
+
+            {children}
+
+          </div>
+
         </main>
 
       </div>
 
     </div>
+
   );
+
 };
 
 export default DashboardLayout;
