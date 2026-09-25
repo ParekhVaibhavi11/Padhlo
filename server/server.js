@@ -78,80 +78,121 @@ app.use(
     "./routes/leaderboardRoutes"
   )
 );
-io.on(
-  "connection",
-  (socket) => {
 
-    console.log(
-      "User Connected:",
-      socket.id
-    );
+io.on("connection", (socket) => {
 
-    socket.on(
-      "joinClassroom",
-      (classroomId) => {
+  console.log(
+    "User connected:",
+    socket.id
+  );
 
-        socket.join(
-          classroomId
+  socket.on(
+    "joinClassroom",
+    (classroomId) => {
+
+      if (!classroomId) return;
+
+      socket.join(classroomId);
+
+      console.log(
+        `Socket ${socket.id} joined classroom ${classroomId}`
+      );
+
+    }
+  );
+
+  socket.on(
+    "leaveClassroom",
+    (classroomId) => {
+
+      if (!classroomId) return;
+
+      socket.leave(classroomId);
+
+      console.log(
+        `Socket ${socket.id} left classroom ${classroomId}`
+      );
+
+    }
+  );
+
+  socket.on(
+    "sendMessage",
+    (data) => {
+
+      if (!data?.classroomId) return;
+
+      socket
+        .to(data.classroomId)
+        .emit(
+          "receiveMessage",
+          data
         );
 
-      }
-    );
+    }
+  );
 
-    socket.on(
-      "sendMessage",
-      (data) => {
-        socket.on(
-  "messageDeleted",
-  (data) => {
+  socket.on(
+    "messageDeleted",
+    (data) => {
 
-    io.to(
-      data.classroomId
-    ).emit(
-      "messageDeleted",
-      data
-    );
+      if (
+        !data?.classroomId ||
+        !data?.messageId
+      ) return;
 
-  }
-);
-
-socket.on(
-  "messageEdited",
-  (data) => {
-
-    io.to(
-      data.classroomId
-    ).emit(
-      "messageEdited",
-      data
-    );
-
-  }
-);
-
-socket.to(
-  data.classroomId
-).emit(
-  "receiveMessage",
-  data
-);
-
-      }
-    );
-
-    socket.on(
-      "disconnect",
-      () => {
-
-        console.log(
-          "User Disconnected"
+      socket
+        .to(data.classroomId)
+        .emit(
+          "messageDeleted",
+          {
+            messageId:
+              data.messageId
+          }
         );
 
-      }
-    );
+    }
+  );
 
-  }
-);
+  socket.on(
+    "messageEdited",
+    (data) => {
+
+      if (
+        !data?.classroomId ||
+        !data?.messageId
+      ) return;
+
+      socket
+        .to(data.classroomId)
+        .emit(
+          "messageEdited",
+          {
+            messageId:
+              data.messageId,
+
+            message:
+              data.message
+          }
+        );
+
+    }
+  );
+
+  socket.on(
+    "disconnect",
+    () => {
+
+      console.log(
+        "User disconnected:",
+        socket.id
+      );
+
+    }
+  );
+
+});
+
 app.get("/", (req, res) => {
   res.send("Padhlo API Running");
 });

@@ -35,16 +35,30 @@ const createTask = async (req, res) => {
 const getTasks = async (req, res) => {
   try {
 
-    const tasks = await Task.find({
-      user: req.user._id,
-    }).sort({
-      createdAt: -1,
-    });
+  const tasks = await Task.find({
+  user: req.user._id,
+}).sort({
+  createdAt: -1,
+});
 
-    res.status(200).json({
-      success: true,
-      tasks,
-    });
+const tasksWithStatus = tasks.map((task) => {
+
+  const isExpired =
+    !task.completed &&
+    task.deadline &&
+    new Date(task.deadline) < new Date();
+
+  return {
+    ...task.toObject(),
+    expired: isExpired,
+  };
+
+});
+
+res.status(200).json({
+  success: true,
+  tasks: tasksWithStatus,
+});
 
   } catch (error) {
 

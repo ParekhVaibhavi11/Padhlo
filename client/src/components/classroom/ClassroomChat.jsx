@@ -57,86 +57,95 @@ const ClassroomChat = ({
 
  
 
-  useEffect(() => {
+useEffect(() => {
 
-    loadMessages();
+  if (!classroomId) return;
 
-    socket.emit(
-      "joinClassroom",
-      classroomId
+  loadMessages();
+
+  socket.emit(
+    "joinClassroom",
+    classroomId
+  );
+
+  const handleReceiveMessage = (newMessage) => {
+
+    setMessages((prev) => [
+      ...prev,
+      newMessage,
+    ]);
+
+  };
+
+  const handleMessageDeleted = ({ messageId }) => {
+
+    setMessages((prev) =>
+      prev.filter(
+        (msg) =>
+          msg._id !== messageId
+      )
     );
 
-    socket.on(
-      "receiveMessage",
-      (newMessage) => {
+  };
 
-        setMessages(
-          (prev) => [
-            ...prev,
-            newMessage,
-          ]
-        );
-
-      }
-    );
-
-    socket.on(
-  "messageDeleted",
-  ({ messageId }) => {
-
-    setMessages(
-      (prev) =>
-        prev.filter(
-          (msg) =>
-            msg._id !==
-            messageId
-        )
-    );
-
-  }
-);
-
-socket.on(
-  "messageEdited",
-  ({
+  const handleMessageEdited = ({
     messageId,
     message,
   }) => {
 
-    setMessages(
-      (prev) =>
-        prev.map(
-          (msg) =>
-            msg._id ===
-            messageId
-              ? {
-                  ...msg,
-                  message,
-                }
-              : msg
-        )
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg._id === messageId
+          ? {
+              ...msg,
+              message,
+            }
+          : msg
+      )
     );
 
-  }
-);
+  };
 
-    return () => {
-
-  socket.off(
-    "receiveMessage"
+  socket.on(
+    "receiveMessage",
+    handleReceiveMessage
   );
 
-  socket.off(
-    "messageDeleted"
+  socket.on(
+    "messageDeleted",
+    handleMessageDeleted
   );
 
-  socket.off(
-    "messageEdited"
+  socket.on(
+    "messageEdited",
+    handleMessageEdited
   );
 
-};
+  return () => {
 
-  }, [classroomId]);
+    socket.emit(
+      "leaveClassroom",
+      classroomId
+    );
+
+    socket.off(
+      "receiveMessage",
+      handleReceiveMessage
+    );
+
+    socket.off(
+      "messageDeleted",
+      handleMessageDeleted
+    );
+
+    socket.off(
+      "messageEdited",
+      handleMessageEdited
+    );
+
+  };
+
+}, [classroomId]);
 
   useEffect(() => {
 
@@ -172,50 +181,47 @@ socket.on(
       }
     };
 
-  const handleSend =
-    async (e) => {
+ const handleSend =
+  async (e) => {
 
-      e.preventDefault();
+    e.preventDefault();
 
-      if (
-        !message.trim()
-      ) return;
+    if (!message.trim()) return;
 
-      try {
+    try {
 
-        const data =
-          await saveMessage(
-            classroomId,
-            message
-          );
-
-        setMessages(
-          (prev) => [
-            ...prev,
-            data.message
-          ]
+      const data =
+        await saveMessage(
+          classroomId,
+          message.trim()
         );
 
-        socket.emit(
-          "sendMessage",
-          {
-            classroomId,
-            ...data.message
-          }
-        );
+      setMessages(
+        (prev) => [
+          ...prev,
+          data.message
+        ]
+      );
 
-        setMessage("");
+      socket.emit(
+        "sendMessage",
+        {
+          classroomId,
+          ...data.message
+        }
+      );
 
-      } catch (error) {
+      setMessage("");
 
-        console.log(
-          error
-        );
+    } catch (error) {
 
-      }
-    };
+      console.log(error);
 
-   const handleDelete =
+    }
+
+  };
+
+  const handleDelete =
   async (
     messageId
   ) => {
@@ -260,15 +266,13 @@ const handleEdit =
         msg.message
       );
 
-    if (
-      !updatedMessage
-    ) return;
+    if (!updatedMessage?.trim()) return;
 
     try {
 
       await editMessage(
         msg._id,
-        updatedMessage
+        updatedMessage.trim()
       );
 
       socket.emit(
@@ -280,7 +284,7 @@ const handleEdit =
             msg._id,
 
           message:
-            updatedMessage,
+            updatedMessage.trim(),
         }
       );
 
@@ -293,7 +297,7 @@ const handleEdit =
                 ? {
                     ...message,
                     message:
-                      updatedMessage,
+                      updatedMessage.trim(),
                   }
                 : message
           )
@@ -305,7 +309,7 @@ const handleEdit =
 
     }
 
-};
+  };
 
 return (
 
