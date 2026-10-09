@@ -69,6 +69,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "student",
     },
+
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

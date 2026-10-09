@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Login from "../pages/Login/Login";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ClassroomDetails from "../pages/Classroom/ClassroomDetails";
@@ -10,8 +12,7 @@ import Profile from "../pages/Profile/Profile";
 import Classroom from "../pages/Classroom/Classroom";
 import Calendar from "../pages/Calender/Calender";
 import Materials from "../pages/Materials/Materials";
-import Leaderboard
-from "../pages/Leaderboard/Leaderboard";
+import Leaderboard from "../pages/Leaderboard/Leaderboard";
 
 const AppRoutes = () => {
   return (
@@ -30,6 +31,16 @@ const AppRoutes = () => {
         <Route
           path="/register"
           element={<Register />}
+        />
+
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
+        <Route
+          path="/reset-password/:token"
+          element={<ResetPassword />}
         />
 
        <Route
