@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Login from "../pages/Login/Login";
+import LandingPage from "../pages/LandingPage/LandingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ClassroomDetails from "../pages/Classroom/ClassroomDetails";
 import Tasks from "../pages/Tasks/Tasks";
@@ -19,7 +20,7 @@ const AppRoutes = () => {
 
         <Route
           path="/"
-          element={<Navigate to="/login" />}
+          element={<LandingPage />}
         />
         <Route
           path="/login"
